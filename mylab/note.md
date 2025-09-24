@@ -1,0 +1,39 @@
+# S01 ai search
+docs:
+
+https://learn.microsoft.com/zh-tw/azure/search/search-get-started-vector?tabs=keyless&pivots=python
+
+codes:
+
+https://github.com/azure-ai-foundry/foundry-samples/blob/main/samples/microsoft/python/getting-started-agents/azure_ai_search.py
+
+https://github.com/Azure-Samples/azure-search-python-samples/tree/main/Quickstart-Vector-Search
+
+# S02 Azure Logic App
+
+docs:
+https://learn.microsoft.com/en-us/azure/app-service/tutorial-send-email?tabs=dotnetcore
+
+https://learn.microsoft.com/en-us/azure/connectors/connectors-create-api-office365-outlook?tabs=consumption#add-an-office-365-outlook-action
+
+https://learn.microsoft.com/en-us/azure/logic-apps/add-trigger-action-workflow?tabs=consumption#add-action
+
+code:
+https://github.com/azure-ai-foundry/foundry-samples/blob/main/samples/microsoft/python/getting-started-agents/logic_apps/
+
+
+
+# S03 Microsoft Fabric
+docs:
+
+code:
+
+# S04 azure databricks
+docs:
+
+codes:
+
+# s05 multi agents
+docs:
+
+codes:

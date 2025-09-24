@@ -134,6 +134,9 @@ with project_client:
     functions = FunctionTool(functions=functions_to_use)
     toolset = ToolSet()
     toolset.add(functions)
+    
+    # Enable automatic function calls
+    project_client.agents.enable_auto_function_calls(toolset)
 
     agent = project_client.agents.create_agent(
         model=os.environ["MODEL_DEPLOYMENT_NAME"],
@@ -168,11 +171,17 @@ with project_client:
     # </message_processing>
 
     # <cleanup>
+    # Fetch and log all messages
+    messages = project_client.agents.messages.list(thread_id=thread.id)
+    print("\n=== 訊息歷史 ===")
+    for message in messages:
+        print(f"角色: {message.role}")
+        if hasattr(message, 'content') and message.content:
+            for content_item in message.content:
+                if hasattr(content_item, 'text') and content_item.text:
+                    print(f"內容: {content_item.text.value}")
+        print("---")
+
     # Delete the agent when done
     project_client.agents.delete_agent(agent.id)
     print("Deleted agent")
-
-    # Fetch and log all messages
-    messages = project_client.agents.messages.list(thread_id=thread.id)
-    print(f"Messages: {messages}")
-    # </cleanup>
