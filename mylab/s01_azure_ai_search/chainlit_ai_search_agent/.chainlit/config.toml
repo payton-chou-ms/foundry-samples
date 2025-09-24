@@ -1,0 +1,72 @@
+[project]
+# Whether to enable telemetry (default: true). No personal data is collected.
+enable_telemetry = false
+
+# List of environment variables to be provided by each user to use the app.
+user_env = []
+
+# Duration (in seconds) during which the session is saved when the connection is lost
+session_timeout = 3600
+
+# Enable third parties caching (e.g LangChain cache)
+cache = false
+
+# Authorized origins
+allow_origins = ["*"]
+
+# Follow symlink for asset mount (see https://github.com/Chainlit/chainlit/issues/317)
+# follow_symlink = false
+
+[features]
+# Process and display mathematical expressions and equations (default: false)
+latex = false
+
+# Authorize users to upload files with messages
+multi_modal = false
+
+# Allows user to use speech to text
+speech_to_text = false
+
+# Auto scroll the user inputs to the bottom of the page
+auto_scroll = true
+
+[UI]
+# Name of the app and chatbot.
+name = "Azure AI Search Agent 智能搜索助手"
+
+# Show the readme while the thread is empty.
+show_readme_as_default = true
+
+# Description of the app and chatbot. This is used for HTML tags.
+description = "An intelligent AI agent powered by Azure AI Search with interactive chat interface. 基於 Azure AI Search 的智能代理，提供互動式聊天介面。"
+
+# Large size content are by default collapsed for a cleaner ui
+default_collapse_content = true
+
+# The default value for the expand messages settings.
+default_expand_messages = false
+
+# Hide the chain of thought details from the user in the UI.
+hide_cot = false
+
+# Link to your github repo. This will add a github button in the UI's header.
+# github = ""
+
+# Specify a CSS file that can be used to customize the user interface.
+# The CSS file can be served from the public directory or via an external link.
+# custom_css = "/public/style.css"
+
+# Override default MUI light theme. (Check theme.py)
+[UI.theme]
+    # primary_color = "#1976d2"
+    # background_color = "#fafafa"
+    # paper_color = "#ffffff"
+    # [UI.theme.light]
+    #     background_color = "#fafafa"
+    #     paper_color = "#ffffff"
+    # [UI.theme.dark]
+    #     background_color = "#121212" 
+    #     paper_color = "#1e1e1e"
+
+[meta]
+generated_by = "1.0.0"

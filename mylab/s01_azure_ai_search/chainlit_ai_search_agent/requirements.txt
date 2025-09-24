@@ -1,0 +1,14 @@
+# Azure AI Projects and Agents
+azure-ai-projects>=1.0.0b1
+
+# Azure Identity for authentication
+azure-identity>=1.10.0
+
+# Chainlit for interactive UI
+chainlit>=1.0.0
+
+# Environment variable management
+python-dotenv>=1.0.0
+
+# Optional: Additional utilities for debugging and development
+asyncio-compat>=0.1.2
