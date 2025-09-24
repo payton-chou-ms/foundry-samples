@@ -18,6 +18,9 @@ mylab/s01_azure_ai_search/
 ├── step1_create_search_index.py    # 步驟 1: 建立搜索索引
 ├── step2_create_ai_agent.py        # 步驟 2: 建立 AI Agent
 ├── step3_cleanup_resources.py      # 步驟 3: 清理資源
+├── run_all_steps.py                # 便利執行腳本
+├── requirements.txt                # Python 依賴套件清單
+├── .env.example                    # 環境變數範本檔案
 ├── README.md                       # 本說明文件
 └── vector-search-quickstart.ipynb  # 原始 Jupyter Notebook
 ```
@@ -34,6 +37,10 @@ mylab/s01_azure_ai_search/
 ### 安裝依賴套件
 
 ```bash
+# 使用 requirements.txt（推薦）
+pip install -r requirements.txt
+
+# 或手動安裝個別套件
 pip install azure-search-documents
 pip install azure-ai-projects
 pip install azure-identity
@@ -42,8 +49,12 @@ pip install python-dotenv
 
 ### 環境變數設定
 
-創建 `.env` 檔案並設定以下變數：
+1. 複製環境變數範本：
+```bash
+cp .env.example .env
+```
 
+2. 編輯 `.env` 檔案並填入您的設定：
 ```bash
 # Azure AI Search 設定
 AZURE_SEARCH_ENDPOINT=https://your-search-service.search.windows.net
@@ -140,6 +151,26 @@ python step3_cleanup_resources.py --force
 - 📊 清理摘要報告
 
 ## 🎮 使用指南
+
+### 快速開始（推薦）
+
+使用便利腳本執行所有步驟：
+
+```bash
+# 執行所有步驟（包含清理）
+python run_all_steps.py
+
+# 執行所有步驟但跳過清理
+python run_all_steps.py --skip-cleanup
+
+# 使用互動式清理
+python run_all_steps.py --interactive-cleanup
+
+# 僅執行特定步驟
+python run_all_steps.py --step 1
+python run_all_steps.py --step 2
+python run_all_steps.py --step 3
+```
 
 ### 完整流程執行
 
