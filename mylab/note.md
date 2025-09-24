@@ -30,10 +30,13 @@ code:
 
 # S04 azure databricks
 docs:
+https://caiomsouza.medium.com/announcing-the-azure-databricks-native-connector-in-azure-ai-foundry-78c15250d643
 
 codes:
+https://github.com/Azure-Samples/AI-Foundry-Connections/blob/main/src/samples/python/sample_agent_adb_genie.py
 
 # s05 multi agents
 docs:
 
 codes:
+
