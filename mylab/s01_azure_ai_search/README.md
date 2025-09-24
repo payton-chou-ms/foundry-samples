@@ -18,7 +18,6 @@ mylab/s01_azure_ai_search/
 ├── step1_create_search_index.py    # 步驟 1: 建立搜索索引
 ├── step2_create_ai_agent.py        # 步驟 2: 建立 AI Agent
 ├── step3_cleanup_resources.py      # 步驟 3: 清理資源
-├── run_all_steps.py                # 便利執行腳本
 ├── requirements.txt                # Python 依賴套件清單
 ├── .env.example                    # 環境變數範本檔案
 ├── README.md                       # 本說明文件
@@ -152,26 +151,6 @@ python step3_cleanup_resources.py --force
 
 ## 🎮 使用指南
 
-### 快速開始（推薦）
-
-使用便利腳本執行所有步驟：
-
-```bash
-# 執行所有步驟（包含清理）
-python run_all_steps.py
-
-# 執行所有步驟但跳過清理
-python run_all_steps.py --skip-cleanup
-
-# 使用互動式清理
-python run_all_steps.py --interactive-cleanup
-
-# 僅執行特定步驟
-python run_all_steps.py --step 1
-python run_all_steps.py --step 2
-python run_all_steps.py --step 3
-```
-
 ### 完整流程執行
 
 1. **準備環境**:
@@ -203,12 +182,6 @@ python run_all_steps.py --step 3
    根據提示清理資源
 
 ### 進階使用
-
-#### 自訂索引名稱
-```bash
-export AZURE_SEARCH_INDEX=my-custom-index
-python step1_create_search_index.py
-```
 
 #### 僅清理特定資源
 ```bash
@@ -280,92 +253,3 @@ python step3_cleanup_resources.py --index-only
 import logging
 logging.basicConfig(level=logging.DEBUG)
 ```
-
-#### 測試連接
-```python
-# 測試搜索服務連接
-from azure.search.documents import SearchClient
-search_client = SearchClient(endpoint, index_name, credential)
-results = search_client.search("*", top=1)
-```
-
-#### 驗證環境變數
-```python
-import os
-print("搜索端點:", os.getenv("AZURE_SEARCH_ENDPOINT"))
-print("專案端點:", os.getenv("PROJECT_ENDPOINT"))
-```
-
-## 📈 效能優化
-
-### 搜索效能
-- 使用適當的向量演算法配置
-- 設定合理的搜索結果數量限制
-- 優化索引欄位設計
-
-### Agent 效能
-- 設定適當的對話超時時間
-- 優化提示詞設計
-- 使用快取機制減少重複查詢
-
-## 🔒 安全性考量
-
-### 資料保護
-- 定期輪換 API 金鑰
-- 使用 Azure Key Vault 存儲敏感資訊
-- 啟用網路存取限制
-
-### 權限管理
-- 使用最小權限原則
-- 設定適當的角色和權限
-- 啟用審計日誌
-
-## 📚 延伸學習
-
-### 相關文檔
-- [Azure AI Search 官方文檔](https://docs.microsoft.com/azure/search/)
-- [Azure AI Studio 指南](https://docs.microsoft.com/azure/ai-studio/)
-- [Azure AI Projects SDK](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-projects)
-
-### 進階主題
-- 自訂嵌入模型訓練
-- 大規模向量索引優化
-- 多語言搜索支援
-- 即時索引更新
-
-### 範例專案
-- 企業知識庫搜索
-- 電商產品推薦
-- 文檔問答系統
-- 客戶服務機器人
-
-## 🤝 貢獻指南
-
-歡迎提交問題報告、功能請求或程式碼貢獻！
-
-### 報告問題
-1. 描述問題現象
-2. 提供重現步驟
-3. 包含錯誤訊息和日誌
-
-### 提交改進
-1. Fork 此專案
-2. 創建功能分支
-3. 提交變更
-4. 發起 Pull Request
-
-## 📄 授權條款
-
-此專案採用 MIT 授權條款。詳見 LICENSE 檔案。
-
-## 🙋‍♀️ 聯絡方式
-
-如有問題或建議，請透過以下方式聯絡：
-
-- 建立 GitHub Issue
-- 發送電子郵件至專案維護者
-- 參與社群討論
-
----
-
-**注意**: 此專案僅供學習和演示使用。在生產環境中使用前，請確保進行充分的測試和安全性評估。

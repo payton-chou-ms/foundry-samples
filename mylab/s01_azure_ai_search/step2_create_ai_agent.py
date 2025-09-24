@@ -112,11 +112,10 @@ def create_ai_agent_with_search(config):
     """Create an AI agent with Azure AI Search integration."""
     print(f"\n🤖 建立 AI Agent 與搜索整合 / Creating AI agent with search integration...")
     
-    # Initialize the AI Project Client
+    # Initialize the AI Project Client - 移除 api_version 參數
     project_client = AIProjectClient(
         endpoint=config["project_endpoint"],
         credential=config["project_credential"],
-        api_version="latest",
     )
     
     print(f"✅ AI Project 客戶端初始化成功 / AI Project client initialized")
