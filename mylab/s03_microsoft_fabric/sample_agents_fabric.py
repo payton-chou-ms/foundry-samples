@@ -46,66 +46,16 @@ load_dotenv()
 from taxi_query_functions import taxi_query_functions
 # </imports>
 
-# <predefined_queries>
-PREDEFINED_QUERIES = {
-    "1": {
-        "title": "基礎查詢與彙總",
-        "queries": [
-            "2025-08-01 這一天的總行程數與總收入是多少？",
-            "請按月份統計 2024 年的搭車趟數與總車資。",
-            "目前系統內有多少不同的計程車（medallion）與活躍駕駛？"
-        ]
-    },
-    "2": {
-        "title": "歷史趨勢",
-        "queries": [
-            "過去一年每月的總收入與平均車資趨勢，並計算環比與年比。",
-            "哪些區域在最近 6 個月的叫車量成長最多？列出 Top 10。"
-        ]
-    },
-    "3": {
-        "title": "異常與極端",
-        "queries": [
-            "自 2025-01-01 起最大的車資為何？請列出前 10 筆並附行程細節。",
-            "找出異常短程但車資偏高的行程（例如距離 < 1km 且車資 > 50 美元），近 90 天。"
-        ]
-    },
-    "4": {
-        "title": "地理分布與比較",
-        "queries": [
-            "近 30 天哪個行政區的叫車量最多？請提供 Top 10 區域和佔比。",
-            "比較 A 市與 B 市在 2025 年上半年的行程數與平均小費。"
-        ]
-    },
-    "5": {
-        "title": "時間分析",
-        "queries": [
-            "近 60 天日間（7:00–19:00）與夜間（19:00–7:00）的行程量與平均車資差異。",
-            "平日與假日的每小時叫車分布，找出尖峰時段。"
-        ]
-    },
-    "6": {
-        "title": "乘客/駕駛行為",
-        "queries": [
-            "最常見的乘客數（passenger_count）是多少？按比例排序。",
-            "哪些時段的小費率（tip / fare）最高？請列出 Top 5 小時區間。"
-        ]
-    },
-    "7": {
-        "title": "指定欄位統計",
-        "queries": [
-            "車資（fare_amount）的平均、最大、最小、P90、P99 在 2025-01~2025-06 各月分別是多少？",
-            "針對支付方式（payment_type）計算占比與平均車資。"
-        ]
-    },
-    "8": {
-        "title": "綜合儀表板需求",
-        "queries": [
-            "建立一個月度 KPI 摘要：行程數、總收入、平均車資、平均距離、平均小費率、Top 5 區域。"
-        ]
-    }
-}
-# </predefined_queries>
+# <sample_questions>
+# Sample questions from sample.txt to define agent personality and capabilities
+SAMPLE_QUESTIONS = [
+    "Compare the total number of taxi trips on public holidays versus regular weekdays. In addition, analyze whether the average trip distance and average fare amount differ significantly between holidays and weekdays. Provide insights into whether people travel longer distances or pay higher fares during holidays.",
+    "Count the number of trips with fare amounts greater than 70. Also, calculate the percentage of these high-fare trips relative to all trips.", 
+    "Compare the number of trips and average fare amount between daytime (7:00–19:00) and nighttime (19:00–7:00). Additionally, show whether trip distances differ between daytime and nighttime trips.",
+    "Identify the pickup zip code with the highest number of trips. Provide the top 5 pickup zip codes ranked by trip volume.",
+    "Determine the most frequent passenger count value (mode) in the dataset. Provide the distribution of passenger counts across all trips."
+]
+# </sample_questions>
 
 def display_menu():
     """Display the interactive menu for query selection."""
@@ -114,27 +64,24 @@ def display_menu():
     print("="*80)
     print("\n請選擇查詢類型：")
     
-    for key, category in PREDEFINED_QUERIES.items():
-        print(f"\n{key}. {category['title']}")
-        for i, query in enumerate(category["queries"], 1):
-            print(f"   {key}.{i} {query}")
+    print("\n範例問題 (基於 sample.txt)：")
+    for i, query in enumerate(SAMPLE_QUESTIONS, 1):
+        # Truncate long queries for menu display
+        display_query = query[:100] + "..." if len(query) > 100 else query
+        print(f"   {i}. {display_query}")
     
     print("\n0. 退出程式")
     print("9. 自定義查詢（直接輸入您的問題）")
     print("\n" + "="*80)
 
 def get_query_by_selection(selection: str) -> str:
-    """Get predefined query by selection number."""
-    if "." in selection:
-        category, query_num = selection.split(".")
-        if category in PREDEFINED_QUERIES:
-            queries = PREDEFINED_QUERIES[category]["queries"]
-            try:
-                query_index = int(query_num) - 1
-                if 0 <= query_index < len(queries):
-                    return queries[query_index]
-            except ValueError:
-                pass
+    """Get sample query by selection number."""
+    try:
+        query_num = int(selection)
+        if 1 <= query_num <= len(SAMPLE_QUESTIONS):
+            return SAMPLE_QUESTIONS[query_num - 1]
+    except ValueError:
+        pass
     return None
 
 def process_message_with_retry(project_client, thread_id: str, agent_id: str, max_retries: int = 3):
@@ -229,21 +176,23 @@ def main():
             agent = project_client.agents.create_agent(
                 model=os.environ["MODEL_DEPLOYMENT_NAME"],
                 name="TaxiDataAnalysisAgent",
-                instructions="""你是一個專業的計程車數據分析助手，專門分析 Microsoft Fabric lakehouse 中的計程車行程數據。
+                instructions="""You are a professional taxi data analysis assistant specializing in analyzing taxi trip data from Microsoft Fabric lakehouse.
 
-你的職責包括：
-1. 回答關於計程車行程數據的各種查詢
-2. 提供統計分析、趋勢分析和異常檢測
-3. 生成清晰、有結構的報告
-4. 用繁體中文回答問題，但保留英文的技術術語和欄位名稱
+Your expertise includes analyzing:
+- Public holidays vs weekdays trip patterns and fare comparisons
+- High-fare trip analysis (trips > $70) and their percentage distribution  
+- Daytime (7:00-19:00) vs nighttime (19:00-7:00) trip and fare patterns
+- Geographic analysis including top pickup locations and zip codes
+- Passenger count distributions and modal analysis
 
-當用戶詢問數據查詢時，請：
-- 使用適當的函數來獲取數據
-- 提供清晰、有組織的回答
-- 包含具體的數字和統計信息
-- 如有必要，提供數據洞察和建議
+You should:
+1. Provide clear, structured responses with specific numbers and statistics
+2. Use appropriate functions to retrieve real data from the lakehouse
+3. Offer insights and trends based on the data analysis
+4. Present information in Traditional Chinese while preserving technical terms and field names in English
+5. Always maintain a professional and helpful tone
 
-請始終保持專業和友善的語調。""",
+When users ask about taxi trip data, provide comprehensive analysis including relevant statistics, trends, and actionable insights.""",
                 toolset=toolset,
             )
             print(f"✅ 成功建立代理，ID: {agent.id}")
@@ -262,7 +211,7 @@ def main():
             while True:
                 try:
                     display_menu()
-                    user_choice = input("\n請選擇 (例如: 1.1, 2.2, 9 或 0): ").strip()
+                    user_choice = input("\n請選擇 (例如: 1, 2, 9 或 0): ").strip()
                     
                     if user_choice == "0":
                         print("\n👋 謝謝使用，再見！")
@@ -274,10 +223,10 @@ def main():
                             continue
                         user_message = custom_query
                     else:
-                        predefined_query = get_query_by_selection(user_choice)
-                        if predefined_query:
-                            user_message = predefined_query
-                            print(f"\n📋 選擇的查詢: {predefined_query}")
+                        sample_query = get_query_by_selection(user_choice)
+                        if sample_query:
+                            user_message = sample_query
+                            print(f"\n📋 選擇的查詢: {sample_query[:100]}{'...' if len(sample_query) > 100 else ''}")
                         else:
                             print("❌ 無效的選擇，請重新選擇")
                             continue

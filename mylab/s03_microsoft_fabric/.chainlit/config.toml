@@ -1,0 +1,37 @@
+[project]
+# The project name
+name = "Taxi Data Analysis Agent"
+
+# Whether to enable telemetry (default: true). No personal data is collected.
+enable_telemetry = false
+
+[UI]
+# Name of the app and chatbot.
+name = "Taxi Data Analysis Assistant"
+
+# Show the readme while the thread is empty.
+show_readme_as_default = true
+
+# Description of the app and chatbot. This is used for HTML tags.
+description = "Microsoft Fabric Taxi Data Analysis Agent with Azure AI Foundry"
+
+# Large size content are by default collapsed for a cleaner ui
+default_collapse_content = true
+
+# The default value for the expand messages settings.
+default_expand_messages = false
+
+# Hide the chain of thought details from the user in the UI.
+hide_cot = false
+
+# Link to your github repo. This will add a github button in the UI's header.
+# github = ""
+
+# Specify a CSS file that allows you to customize the user interface.
+# The CSS file should be placed in the .chainlit directory.
+
+# Override default MUI light theme. (Check theme.py)
+[UI.theme]
+#layout = "wide"
+#font_family = "Inter, sans-serif"
+default_language = "zh"
