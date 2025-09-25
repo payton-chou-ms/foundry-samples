@@ -229,7 +229,7 @@ I'm here to help you analyze the NYC taxi trip dataset. You can ask me questions
             actions.append(
                 cl.Action(
                     name=f"sample_question_{i}",
-                    value=question.split("(")[0].strip(),  # Remove Chinese translation for cleaner button text
+                    payload={"question": question.split("(")[0].strip()},  # Add required payload field
                     label=f"📊 {question}",
                     description=f"Ask: {question.split('(')[0].strip()}"
                 )
@@ -247,23 +247,23 @@ I'm here to help you analyze the NYC taxi trip dataset. You can ask me questions
 
 @cl.action_callback("sample_question_0")
 async def sample_question_0(action):
-    await handle_sample_question(action.value)
+    await handle_sample_question(action.payload["question"])
 
 @cl.action_callback("sample_question_1") 
 async def sample_question_1(action):
-    await handle_sample_question(action.value)
+    await handle_sample_question(action.payload["question"])
 
 @cl.action_callback("sample_question_2")
 async def sample_question_2(action):
-    await handle_sample_question(action.value)
+    await handle_sample_question(action.payload["question"])
 
 @cl.action_callback("sample_question_3")
 async def sample_question_3(action):
-    await handle_sample_question(action.value)
+    await handle_sample_question(action.payload["question"])
 
 @cl.action_callback("sample_question_4")
 async def sample_question_4(action):
-    await handle_sample_question(action.value)
+    await handle_sample_question(action.payload["question"])
 
 async def handle_sample_question(question):
     """Handle sample question button clicks."""
