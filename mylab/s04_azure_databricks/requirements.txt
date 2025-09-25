@@ -4,3 +4,4 @@ azure-identity
 databricks-ai-bridge
 databricks-sdk
 python-dotenv
+chainlit

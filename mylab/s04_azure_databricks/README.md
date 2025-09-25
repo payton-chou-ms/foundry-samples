@@ -1,6 +1,6 @@
-# AI Foundry Connections
+# AI Foundry Connections - Azure Databricks with Genie
 
-This repository hosts samples and examples for using AI Foundry Connections with Agents.
+This repository hosts samples and examples for using AI Foundry Connections with Agents, specifically for Azure Databricks integration with Genie API.
 
 ## Overview
 
@@ -10,10 +10,61 @@ AI Foundry Connections provides integration capabilities between various resourc
 
 The samples in this repository demonstrate:
 - How to connect AI Foundry services with agents
-- Integration patterns for different use cases
+- Integration patterns for different use cases  
 - Best practices for implementation
+- **NEW**: Interactive Chainlit UI for data analysis with sample question buttons
 
-## Prerequisite
+## Available Applications
+
+### 1. Command Line Samples
+- `sample_agent_adb_genie.py` - Basic agent for single questions
+- `sample_agent_adb_genie_conversation.py` - Agent with conversation context
+- `sample_agent_adb_job.py` - Job-based agent implementation
+
+### 2. **Chainlit Interactive UI** 🆕
+- `chainlit_agent_adb_genie.py` - **Full interactive web UI with sample question buttons**
+- `demo_chainlit_app.py` - Demo version for testing without Azure credentials
+- Features:
+  - 🚕 **Interactive chat interface** for NYC taxi data analysis
+  - 📊 **Pre-configured sample question buttons** (fare stats, time trends, etc.)
+  - 🆔 **Agent lifecycle management** (displays agent ID, auto-cleanup)
+  - ⚡ **Real-time analysis** through Databricks Genie API
+  - 🔄 **Session management** with conversation context
+
+## Quick Start - Chainlit UI
+
+1. **Install dependencies:**
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+2. **Configure environment:**
+   ```bash
+   cp .env.template .env
+   # Edit .env with your Azure AI Foundry project details
+   ```
+
+3. **Run the interactive UI:**
+   ```bash
+   chainlit run chainlit_agent_adb_genie.py
+   ```
+
+4. **Open your browser** to the URL shown (usually http://localhost:8000)
+
+5. **Click the sample question buttons** or type your own questions about NYC taxi data!
+
+See [CHAINLIT_README.md](CHAINLIT_README.md) for detailed instructions.
+
+## Agent Configuration
+
+The agent is specifically configured for **NYC taxi trip data analysis** with instructions based on `sample.txt`:
+
+- **Dataset**: Connected to Databricks "samples.nyctaxi.trips" dataset  
+- **Capabilities**: Fare statistics, time-based trends, distance vs fare analysis, geographic comparisons, outlier detection
+- **Sample Questions**: 5 pre-configured buttons for common analysis tasks
+- **Response Style**: Clear explanations with SQL queries and natural language summaries
+
+## Prerequisites
 
 - Python 3.8 or later.
 - An [Azure subscription][azure_sub].
