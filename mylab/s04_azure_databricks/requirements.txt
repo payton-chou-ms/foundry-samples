@@ -1,0 +1,6 @@
+azure-ai-projects
+azure-ai-agents
+azure-identity
+databricks-ai-bridge
+databricks-sdk
+python-dotenv

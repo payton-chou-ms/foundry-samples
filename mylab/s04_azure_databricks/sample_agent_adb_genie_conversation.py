@@ -16,7 +16,7 @@ USAGE:
 
     pip install azure-ai-projects azure-ai-agents azure-identity databricks-sdk
 
-    Set these environment variables with your own values:
+    Set these environment variables in .env file:
     1) FOUNDRY_PROJECT_ENDPOINT - The endpoint of your Azure AI Foundry project, as found in the "Overview" tab
        in your Azure AI Foundry project.
     2) FOUNDRY_DATABRICKS_CONNECTION_NAME - The name of the Databricks connection, as found in the "Connected Resources" under "Management Center" tab
@@ -26,14 +26,17 @@ USAGE:
 """
 
 import json
+import os
 from databricks.sdk import WorkspaceClient
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
 from databricks.sdk.service.dashboards import GenieAPI
 from azure.ai.agents.models import (FunctionTool, ToolSet)
 from typing import Any, Callable, Set
-import json
-import os
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 os.environ["DATABRICKS_SDK_UPSTREAM"] = "AzureAIFoundry"
 os.environ["DATABRICKS_SDK_UPSTREAM_VERSION"] = "1.0.0"
@@ -41,12 +44,20 @@ os.environ["DATABRICKS_SDK_UPSTREAM_VERSION"] = "1.0.0"
 DATABRICKS_ENTRA_ID_AUDIENCE_SCOPE = "2ff814a6-3304-4ab8-85cb-cd0e6f879c1d/.default" 
 # Well known Entra ID audience for Azure Databricks - https://learn.microsoft.com/en-us/azure/databricks/dev-tools/auth/user-aad-token
 
-FOUNDRY_PROJECT_ENDPOINT = "<FOUNDRY_PROJECT_ENDPOINT>"
-FOUNDRY_DATABRICKS_CONNECTION_NAME = "<FOUNDRY_DATABRICKS_CONNECTION_NAME>"
+# Get configuration from environment variables
+FOUNDRY_PROJECT_ENDPOINT = os.getenv("FOUNDRY_PROJECT_ENDPOINT")
+FOUNDRY_DATABRICKS_CONNECTION_NAME = os.getenv("FOUNDRY_DATABRICKS_CONNECTION_NAME")
+GENIE_QUESTION_1 = os.getenv("GENIE_QUESTION_1")
+GENIE_QUESTION_2 = os.getenv("GENIE_QUESTION_2")
 
-GENIE_QUESTION_1 = "What is the average transaction value?"
-
-GENIE_QUESTION_2 = "How many transactions were made that were above that value?"
+if not FOUNDRY_PROJECT_ENDPOINT:
+    raise ValueError("FOUNDRY_PROJECT_ENDPOINT environment variable is required")
+if not FOUNDRY_DATABRICKS_CONNECTION_NAME:
+    raise ValueError("FOUNDRY_DATABRICKS_CONNECTION_NAME environment variable is required")
+if not GENIE_QUESTION_1:
+    raise ValueError("GENIE_QUESTION_1 environment variable is required")
+if not GENIE_QUESTION_2:
+    raise ValueError("GENIE_QUESTION_2 environment variable is required")
 
 ##################
 # Utility functions

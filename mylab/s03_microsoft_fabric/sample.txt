@@ -1,0 +1,22 @@
+
+# Sample question from user:
+
+q1:
+Compare the total number of taxi trips on public holidays versus regular weekdays.
+In addition, analyze whether the average trip distance and average fare amount differ significantly between holidays and weekdays.
+Provide insights into whether people travel longer distances or pay higher fares during holidays.
+q2:
+Count the number of trips with fare amounts greater than 70.
+Also, calculate the percentage of these high-fare trips relative to all trips.
+q3:
+Compare the number of trips and average fare amount between daytime (7:00–19:00) and nighttime (19:00–7:00).
+Additionally, show whether trip distances differ between daytime and nighttime trips.
+q4:
+Identify the pickup zip code with the highest number of trips.
+Provide the top 5 pickup zip codes ranked by trip volume.
+q5:
+Determine the most frequent passenger count value (mode) in the dataset.
+Provide the distribution of passenger counts across all trips.
+
+
+
