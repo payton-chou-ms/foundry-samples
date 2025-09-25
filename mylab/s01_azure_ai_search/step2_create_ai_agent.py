@@ -6,15 +6,19 @@
 FILE: step2_create_ai_agent.py
 
 DESCRIPTION:
-    This script demonstrates how to generate an Azure AI Foundry agent and integrate it with Azure AI Search.
-    It creates an AI agent with search tools, enables conversation functionality, and tests agent responses.
+    This script demonstrates how to create an Azure AI Foundry agent with Chainlit UI integration.
+    It creates a hotel search assistant with interactive UI components and agent lifecycle management.
 
 USAGE:
-    python step2_create_ai_agent.py
+    For Chainlit UI:
+        chainlit run step2_create_ai_agent.py -w
+    
+    For command line testing:
+        python step2_create_ai_agent.py
 
     Before running the script:
     1. Run step1_create_search_index.py first to create the search index
-    2. pip install azure-ai-projects azure-identity python-dotenv azure-search-documents
+    2. pip install -r requirements.txt
     3. Create a .env file with the following variables:
        - PROJECT_ENDPOINT (Azure AI Project endpoint)
        - MODEL_DEPLOYMENT_NAME (AI model deployment name)
@@ -22,13 +26,11 @@ USAGE:
        - AZURE_SEARCH_API_KEY
        - AZURE_SEARCH_INDEX (optional, defaults to "vector-search-quickstart")
 
-STEPS PERFORMED:
-    1. Initialize Azure AI Project client and credentials
-    2. Verify search index availability
-    3. Create AI agent with search tool integration
-    4. Test agent conversation capabilities
-    5. Validate agent usage of Azure AI Search
-    6. Demonstrate agent vs. non-agent responses
+FEATURES:
+    1. Interactive Chainlit UI with sample question buttons
+    2. Agent lifecycle management (creation, display ID, cleanup)
+    3. Hotel search assistant with specialized personality
+    4. Azure AI Search integration for hotel information retrieval
 """
 
 import os
@@ -38,6 +40,10 @@ from azure.core.credentials import AzureKeyCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.agents.models import MessageRole, ListSortOrder
 from azure.search.documents import SearchClient
+
+# Chainlit imports
+import chainlit as cl
+from typing import Optional
 
 
 def initialize_environment():
@@ -109,10 +115,10 @@ def verify_search_index(search_endpoint, search_credential, index_name):
 
 
 def create_ai_agent_with_search(config):
-    """Create an AI agent with Azure AI Search integration."""
+    """Create an AI agent with Azure AI Search integration and hotel-focused personality."""
     print(f"\n🤖 建立 AI Agent 與搜索整合 / Creating AI agent with search integration...")
     
-    # Initialize the AI Project Client - 移除 api_version 參數
+    # Initialize the AI Project Client
     project_client = AIProjectClient(
         endpoint=config["project_endpoint"],
         credential=config["project_credential"],
@@ -120,47 +126,45 @@ def create_ai_agent_with_search(config):
     
     print(f"✅ AI Project 客戶端初始化成功 / AI Project client initialized")
     
-    # Create the AI agent with search capabilities
-    # Note: In the original notebook, this was using FileSearchTool with vector stores
-    # Here we're creating a basic agent that can be extended with search tools
+    # Create the AI agent with hotel search capabilities and focused personality
     agent = project_client.agents.create_agent(
         model=config["model_deployment_name"],
-        name="hotel-search-agent",
-        instructions=f"""你是一個專業的酒店搜索助手。你可以使用 Azure AI Search 來幫助用戶找到合適的酒店資訊。
+        name="hotel-search-assistant",
+        instructions=f"""你是一位專業的酒店搜索助理，專門協助客戶尋找合適的酒店住宿。
+You are a professional hotel search assistant specializing in helping clients find suitable hotel accommodations.
 
-You are a professional hotel search assistant. You can use Azure AI Search to help users find suitable hotel information.
+🏨 您的專業領域包括：
+Your areas of expertise include:
+• 酒店信息查詢和推薦 / Hotel information inquiry and recommendations
+• 精品酒店和特色住宿 / Boutique hotels and unique accommodations  
+• 酒店評分和設施分析 / Hotel ratings and amenities analysis
+• 停車和位置便利性 / Parking and location convenience
+• 價格比較和性價比建議 / Price comparison and value recommendations
 
-當用戶詢問酒店資訊時，請：
-1. 使用搜索功能來查找相關的酒店資料
-2. 提供詳細和準確的資訊
-3. 包含酒店名稱、位置、評分、設施等重要資訊
-4. 用友善和專業的語調回答
+🔍 當用戶提問時，請：
+When users ask questions, please:
+1. 根據問題類型提供專業且詳細的回答
+   Provide professional and detailed answers based on question type
+2. 如有相關數據，引用具體的酒店名稱、評分和設施
+   If relevant data is available, cite specific hotel names, ratings, and amenities
+3. 用親切友好的語調回應，就像經驗豐富的旅行顧問
+   Respond in a friendly tone like an experienced travel consultant
+4. 如需更多信息，主動詢問客戶的具體需求
+   Proactively ask about specific needs if more information is required
 
-When users ask about hotel information, please:
-1. Use search functionality to find relevant hotel data
-2. Provide detailed and accurate information
-3. Include important information like hotel names, locations, ratings, and amenities
-4. Answer in a friendly and professional tone
+💡 您可以協助解答的問題包括：
+Questions you can help answer include:
+• 酒店信息和特色介紹 / Hotel information and feature introductions
+• 特定地區的酒店推薦 / Hotel recommendations for specific areas
+• 高評分酒店的詳細信息 / Detailed information about highly-rated hotels
+• 特定酒店的設施和服務 / Amenities and services of specific hotels  
+• 包含停車服務的酒店選項 / Hotel options with parking included
 
-搜索索引包含以下類型的酒店數據：
-- 酒店名稱和描述
-- 地址和位置資訊
-- 評分和類別
-- 設施和標籤
-- 停車和翻新日期
-
-The search index contains the following types of hotel data:
-- Hotel names and descriptions
-- Address and location information
-- Ratings and categories
-- Amenities and tags
-- Parking and renovation dates
-""",
-        # Note: Tools integration would be added here in a full implementation
-        # For now, we create a basic agent that can be extended
+請始終保持專業、友善和有幫助的態度！
+Always maintain a professional, friendly, and helpful attitude!""",
     )
     
-    print(f"✅ AI Agent 建立成功 / AI agent created successfully")
+    print(f"✅ 酒店搜索助理創建成功 / Hotel search assistant created successfully")
     print(f"📋 Agent ID: {agent.id}")
     print(f"📋 Agent 名稱 / Name: {agent.name}")
     
@@ -236,12 +240,12 @@ def ask_agent_question(project_client, agent, thread, question):
 
 
 def test_agent_capabilities(project_client, agent, thread):
-    """Test the agent's capabilities with various questions."""
+    """Test the agent's capabilities with hotel-focused sample questions."""
     print(f"\n🧪 測試 Agent 功能 / Testing agent capabilities...")
     print("=" * 60)
     
-    # Test questions about hotels
-    test_questions = [
+    # Updated sample questions focused on hotel search
+    sample_questions = [
         "What hotels do you know about? Can you tell me about them?",
         "Can you recommend a boutique hotel in New York?",
         "Tell me about hotels with high ratings.",
@@ -251,7 +255,7 @@ def test_agent_capabilities(project_client, agent, thread):
     
     responses = []
     
-    for i, question in enumerate(test_questions, 1):
+    for i, question in enumerate(sample_questions, 1):
         print(f"\n🔍 測試 {i} / Test {i}")
         print("-" * 40)
         
@@ -358,9 +362,12 @@ def validate_agent_search_integration(search_endpoint, search_credential, index_
 
 
 def main():
-    """Main function to execute all steps."""
+    """Main function to execute all steps in command line mode."""
     print("🚀 開始執行步驟 2: 建立 AI Foundry Agent 和相關功能")
     print("🚀 Starting Step 2: Generate AI Foundry Agent and Related Features")
+    print("=" * 80)
+    print("💡 提示：使用 'chainlit run step2_create_ai_agent.py -w' 來啟動互動式 UI")
+    print("💡 Tip: Use 'chainlit run step2_create_ai_agent.py -w' to start interactive UI")
     print("=" * 80)
     
     try:
@@ -383,7 +390,7 @@ def main():
         # Step 4: Create conversation thread
         thread = create_conversation_thread(project_client)
         
-        # Step 5: Test agent capabilities
+        # Step 5: Test agent capabilities with new sample questions
         responses = test_agent_capabilities(project_client, agent, thread)
         
         # Step 6: Compare with simple agent
@@ -401,6 +408,12 @@ def main():
         print(f"📝 Thread ID: {thread.id}")
         print(f"📝 已準備好用於清理 / Ready for cleanup")
         
+        # Show Chainlit usage instructions
+        print(f"\n🚀 **如要使用互動式 UI / To use interactive UI:**")
+        print(f"   chainlit run step2_create_ai_agent.py -w")
+        print(f"\n🧹 **記得清理資源 / Remember to clean up resources:**")
+        print(f"   python step3_cleanup_resources.py")
+        
         # Return important information for cleanup
         return {
             "success": True,
@@ -415,6 +428,185 @@ def main():
         import traceback
         traceback.print_exc()
         return {"success": False, "error": str(e)}
+
+
+# ================== CHAINLIT UI COMPONENTS ==================
+
+# Global variables to store agent and client
+project_client: Optional[AIProjectClient] = None
+agent = None
+thread = None
+config = None
+
+# Sample questions for suggestion buttons
+SAMPLE_QUESTIONS = [
+    "What hotels do you know about? Can you tell me about them?",
+    "Can you recommend a boutique hotel in New York?",
+    "Tell me about hotels with high ratings.",
+    "What amenities are available at the Old Century Hotel?",
+    "Are there any hotels with parking included?"
+]
+
+
+@cl.on_chat_start
+async def start():
+    """Initialize the agent when Chainlit UI starts."""
+    global project_client, agent, thread, config
+    
+    try:
+        # Initialize environment and create agent
+        config = initialize_environment()
+        
+        # Verify search index
+        if not verify_search_index(
+            config["search_endpoint"], 
+            config["search_credential"], 
+            config["index_name"]
+        ):
+            await cl.Message(
+                content="❌ 搜索索引驗證失敗，請先運行 step1_create_search_index.py\n"
+                       "❌ Search index verification failed, please run step1_create_search_index.py first"
+            ).send()
+            return
+        
+        # Create agent and thread
+        project_client, agent = create_ai_agent_with_search(config)
+        thread = create_conversation_thread(project_client)
+        
+        # Store agent info in session
+        cl.user_session.set("agent_id", agent.id)
+        cl.user_session.set("thread_id", thread.id)
+        
+        # Welcome message with agent info and suggestion buttons
+        welcome_msg = f"""🏨 **酒店搜索助理已就緒！/ Hotel Search Assistant Ready!**
+
+🆔 **Agent ID**: `{agent.id}`
+🧵 **Thread ID**: `{thread.id}`
+
+我是您的專業酒店搜索助理，可以幫您找到最合適的酒店住宿！
+I'm your professional hotel search assistant, ready to help you find the perfect hotel accommodation!
+
+💡 **點擊下方按鈕快速開始，或直接輸入您的問題：**
+**Click the buttons below to get started quickly, or type your question directly:**
+"""
+        
+        await cl.Message(content=welcome_msg).send()
+        
+        # Create suggestion buttons
+        actions = []
+        for i, question in enumerate(SAMPLE_QUESTIONS):
+            actions.append(
+                cl.Action(
+                    name=f"sample_{i}",
+                    value=question,
+                    description=question,
+                    label=f"💬 {question[:50]}{'...' if len(question) > 50 else ''}"
+                )
+            )
+        
+        await cl.Message(
+            content="🎯 **建議問題 / Suggested Questions:**",
+            actions=actions
+        ).send()
+        
+    except Exception as e:
+        await cl.Message(
+            content=f"❌ Agent 初始化失敗 / Agent initialization failed: {str(e)}"
+        ).send()
+
+
+@cl.action_callback("sample_0")
+@cl.action_callback("sample_1")
+@cl.action_callback("sample_2")
+@cl.action_callback("sample_3")
+@cl.action_callback("sample_4")
+async def on_action(action):
+    """Handle sample question button clicks."""
+    await process_message(action.value)
+
+
+@cl.on_message
+async def main_message(message: cl.Message):
+    """Handle user messages."""
+    await process_message(message.content)
+
+
+async def process_message(user_input: str):
+    """Process user input and get agent response."""
+    global project_client, agent, thread
+    
+    if not all([project_client, agent, thread]):
+        await cl.Message(content="❌ Agent 未初始化，請重新啟動 / Agent not initialized, please restart").send()
+        return
+    
+    # Show processing message
+    processing_msg = await cl.Message(content="🤖 處理中... / Processing...").send()
+    
+    try:
+        # Create user message in thread
+        project_client.agents.messages.create(
+            thread_id=thread.id,
+            role=MessageRole.USER,
+            content=user_input
+        )
+        
+        # Create and process run
+        run = project_client.agents.runs.create_and_process(
+            thread_id=thread.id,
+            agent_id=agent.id
+        )
+        
+        if run.status == "completed":
+            # Get agent response
+            messages = project_client.agents.messages.list(
+                thread_id=thread.id,
+                order=ListSortOrder.DESCENDING,
+                limit=1
+            )
+            
+            message_list = list(messages)
+            if message_list:
+                latest_message = message_list[0]
+                if latest_message.role == MessageRole.AGENT:
+                    response_text = ""
+                    if latest_message.content:
+                        for content in latest_message.content:
+                            if hasattr(content, 'text') and content.text:
+                                if hasattr(content.text, 'value'):
+                                    response_text += content.text.value
+                    
+                    # Update processing message with response
+                    await processing_msg.update(content=f"🏨 **酒店助理回覆 / Hotel Assistant Response:**\n\n{response_text}")
+                else:
+                    await processing_msg.update(content="❌ 未收到有效回應 / No valid response received")
+            else:
+                await processing_msg.update(content="❌ 未找到回應訊息 / No response message found")
+                
+        elif run.status == "failed":
+            await processing_msg.update(content=f"❌ 處理失敗 / Processing failed: {run.last_error}")
+        else:
+            await processing_msg.update(content=f"⚠️ 處理狀態 / Processing status: {run.status}")
+            
+    except Exception as e:
+        await processing_msg.update(content=f"❌ 錯誤 / Error: {str(e)}")
+
+
+@cl.on_stop
+async def on_stop():
+    """Cleanup when the session stops."""
+    global project_client, agent
+    
+    if project_client and agent:
+        try:
+            agent_id = cl.user_session.get("agent_id")
+            if agent_id:
+                project_client.agents.delete_agent(agent_id)
+                print(f"🧹 已清理 Agent / Cleaned up Agent: {agent_id}")
+        except Exception as e:
+            print(f"⚠️ 清理 Agent 時發生錯誤 / Error during agent cleanup: {e}")
+
+
+# ================== COMMAND LINE INTERFACE ==================
 
 
 if __name__ == "__main__":
