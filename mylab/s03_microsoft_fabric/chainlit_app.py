@@ -124,31 +124,42 @@ When users ask about taxi trip data, provide comprehensive analysis including re
         cl.user_session.set("thread_id", current_thread.id)
         cl.user_session.set("project_client", project_client)
         
-        # Welcome message with agent ID and sample questions
+        # Welcome message with agent ID and sample questions  
         welcome_msg = f"🚕 **計程車數據分析助手已啟動**\n\n"
-        welcome_msg += f"**Agent ID:** `{current_agent.id}`\n\n"
+        welcome_msg += f"**🤖 Agent ID:** `{current_agent.id}`\n"
+        welcome_msg += f"**🧵 Thread ID:** `{current_thread.id}`\n\n"
         welcome_msg += "我可以幫您分析 Microsoft Fabric lakehouse 中的計程車行程數據。\n\n"
-        welcome_msg += "**建議的查詢問題:**"
+        welcome_msg += "**✨ 建議的查詢問題 (點擊下方按鈕直接送出):**"
         
         await cl.Message(content=welcome_msg).send()
         
         # Create hint buttons for sample questions
         actions = []
         for i, question in enumerate(SAMPLE_QUESTIONS, 1):
-            # Truncate question for button display
-            button_text = question[:60] + "..." if len(question) > 60 else question
+            # Create cleaner button text
+            button_text = f"Q{i}: {question[:45]}..."
             actions.append(
                 cl.Action(
                     name=f"sample_q{i}",
                     value=question,
-                    description=f"Question {i}",
-                    label=f"📝 Q{i}: {button_text}"
+                    description=f"Sample Question {i}",
+                    label=button_text
                 )
             )
         
         await cl.Message(
-            content="點擊下方按鈕可直接送出範例問題:",
+            content="**📝 範例問題 - 點擊按鈕直接送出查詢:**",
             actions=actions
+        ).send()
+        
+        # Add agent status message
+        await cl.Message(
+            content=f"**ℹ️ 系統狀態:**\n"
+                   f"- Agent 已成功建立並配置完成\n"
+                   f"- 對話線程已準備就緒\n"
+                   f"- 關閉瀏覽器時將自動清理 Agent 資源\n\n"
+                   f"您可以點擊上方按鈕或直接輸入問題開始對話。",
+            author="System"
         ).send()
         
     except Exception as e:

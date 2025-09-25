@@ -196,12 +196,19 @@ When users ask about taxi trip data, provide comprehensive analysis including re
                 toolset=toolset,
             )
             print(f"✅ 成功建立代理，ID: {agent.id}")
-            # </agent_creation>
-
-            # <thread_management>
+            
             # Create a thread for continuous conversation
             thread = project_client.agents.threads.create()
             print(f"✅ 成功建立對話線程，ID: {thread.id}")
+            
+            print(f"\n🔑 **Agent Information:**")
+            print(f"   Agent ID: {agent.id}")
+            print(f"   Thread ID: {thread.id}")
+            print(f"   Model: {os.environ['MODEL_DEPLOYMENT_NAME']}")
+            print(f"   Status: Active (will be cleaned up on exit)")
+            # </agent_creation>
+
+            # <thread_management>
             # </thread_management>
 
             # Main conversation loop
