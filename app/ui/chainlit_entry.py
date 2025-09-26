@@ -19,14 +19,37 @@ FEATURES:
 """
 
 import os
+import sys
 import asyncio
 from typing import Optional, Dict, Any
 from dotenv import load_dotenv
 import chainlit as cl
 
-from ..config.settings import load_settings, get_mock_settings, MagenticTeamSettings
-from ..orchestrator import MagenticTeamRuntime
-from ..agents import HotelAgent, TaxiFabricAgent, TaxiGenieAgent, EmailLogicAppsAgent
+# --- Path fix (make repository root importable so 'import app' works) ---
+# __file__ = .../foundry-samples/app/ui/chainlit_entry.py
+# parent 1: .../foundry-samples/app/ui
+# parent 2: .../foundry-samples/app
+# parent 3: .../foundry-samples   <-- this must be on sys.path
+def find_project_root(marker_dir="app"):
+    cur = os.path.dirname(os.path.abspath(__file__))
+    while True:
+        candidate = os.path.join(cur, marker_dir)
+        if os.path.isdir(candidate) and os.path.isfile(os.path.join(candidate, "__init__.py")):
+            return cur
+        parent = os.path.dirname(cur)
+        if parent == cur:
+            raise RuntimeError("Could not locate project root containing 'app' package")
+        cur = parent
+
+PROJECT_ROOT = find_project_root()
+if PROJECT_ROOT not in sys.path:
+    sys.path.insert(0, PROJECT_ROOT)
+
+print("DEBUG PROJECT_ROOT =", PROJECT_ROOT)  # 驗證一次 OK 後可移除
+
+from app.config.settings import load_settings, get_mock_settings, MagenticTeamSettings
+from app.orchestrator import MagenticTeamRuntime
+from app.agents import HotelAgent, TaxiFabricAgent, TaxiGenieAgent, EmailLogicAppsAgent
 
 # Load environment variables
 load_dotenv()
