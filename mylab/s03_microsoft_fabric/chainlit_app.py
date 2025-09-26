@@ -30,6 +30,7 @@ USAGE:
 
 import os
 import time
+import asyncio
 from typing import Optional
 from dotenv import load_dotenv
 import chainlit as cl
@@ -125,7 +126,7 @@ When users ask about taxi trip data, provide comprehensive analysis including re
         cl.user_session.set("project_client", project_client)
         
         # Welcome message with agent ID and sample questions  
-        welcome_msg = f"🚕 **計程車數據分析助手已啟動**\n\n"
+        welcome_msg = "🚕 **計程車數據分析助手已啟動**\n\n"
         welcome_msg += f"**🤖 Agent ID:** `{current_agent.id}`\n"
         welcome_msg += f"**🧵 Thread ID:** `{current_thread.id}`\n\n"
         welcome_msg += "我可以幫您分析 Microsoft Fabric lakehouse 中的計程車行程數據。\n\n"
@@ -143,7 +144,8 @@ When users ask about taxi trip data, provide comprehensive analysis including re
                     name=f"sample_q{i}",
                     value=question,
                     description=f"Sample Question {i}",
-                    label=button_text
+                    label=button_text,
+                    payload={"question": question}
                 )
             )
         
@@ -153,12 +155,14 @@ When users ask about taxi trip data, provide comprehensive analysis including re
         ).send()
         
         # Add agent status message
+        status_msg = "**ℹ️ 系統狀態:**\n"
+        status_msg += "- Agent 已成功建立並配置完成\n"
+        status_msg += "- 對話線程已準備就緒\n"
+        status_msg += "- 關閉瀏覽器時將自動清理 Agent 資源\n\n"
+        status_msg += "您可以點擊上方按鈕或直接輸入問題開始對話。"
+        
         await cl.Message(
-            content=f"**ℹ️ 系統狀態:**\n"
-                   f"- Agent 已成功建立並配置完成\n"
-                   f"- 對話線程已準備就緒\n"
-                   f"- 關閉瀏覽器時將自動清理 Agent 資源\n\n"
-                   f"您可以點擊上方按鈕或直接輸入問題開始對話。",
+            content=status_msg,
             author="System"
         ).send()
         
@@ -171,31 +175,31 @@ When users ask about taxi trip data, provide comprehensive analysis including re
 @cl.action_callback("sample_q1")
 async def on_sample_q1(action):
     """Handle sample question 1."""
-    await process_query(action.value)
+    await process_query(action.payload.get("question", SAMPLE_QUESTIONS[0]))
 
 
 @cl.action_callback("sample_q2") 
 async def on_sample_q2(action):
     """Handle sample question 2."""
-    await process_query(action.value)
+    await process_query(action.payload.get("question", SAMPLE_QUESTIONS[1]))
 
 
 @cl.action_callback("sample_q3")
 async def on_sample_q3(action):
     """Handle sample question 3."""
-    await process_query(action.value)
+    await process_query(action.payload.get("question", SAMPLE_QUESTIONS[2]))
 
 
 @cl.action_callback("sample_q4")
 async def on_sample_q4(action):
     """Handle sample question 4."""
-    await process_query(action.value)
+    await process_query(action.payload.get("question", SAMPLE_QUESTIONS[3]))
 
 
 @cl.action_callback("sample_q5")
 async def on_sample_q5(action):
     """Handle sample question 5."""
-    await process_query(action.value)
+    await process_query(action.payload.get("question", SAMPLE_QUESTIONS[4]))
 
 
 async def process_query(query_content: str):
@@ -236,7 +240,7 @@ async def process_query(query_content: str):
                 
                 # Wait for completion
                 while run.status in ["queued", "in_progress"]:
-                    time.sleep(1)
+                    await asyncio.sleep(1)
                     run = project_client.agents.runs.get(thread_id=thread_id, run_id=run.id)
                 
                 if run.status == "completed":
@@ -244,18 +248,21 @@ async def process_query(query_content: str):
                 elif run.status == "failed":
                     error_msg = f"❌ 處理失敗 (嘗試 {attempt + 1}/{max_retries}): {run.last_error}"
                     if attempt == max_retries - 1:
-                        await processing_msg.update(content=error_msg)
+                        processing_msg.content = error_msg
+                        await processing_msg.update()
                         return
                 else:
-                    await processing_msg.update(content=f"⚠️ 處理完成，狀態: {run.status}")
+                    processing_msg.content = f"⚠️ 處理完成，狀態: {run.status}"
+                    await processing_msg.update()
                     return
                     
             except Exception as e:
                 error_msg = f"❌ 處理錯誤 (嘗試 {attempt + 1}/{max_retries}): {str(e)}"
                 if attempt == max_retries - 1:
-                    await processing_msg.update(content=error_msg)
+                    processing_msg.content = error_msg
+                    await processing_msg.update()
                     return
-                time.sleep(2)  # Wait before retry
+                await asyncio.sleep(2)  # Wait before retry
         
         if run and run.status == "completed":
             # Get the latest assistant message
@@ -265,10 +272,12 @@ async def process_query(query_content: str):
             for message in message_list:
                 if message.role == "assistant":
                     # Update processing message with result
-                    await processing_msg.update(content=f"**助手回覆:**\n\n{message.content}")
+                    processing_msg.content = f"**助手回覆:**\n\n{message.content}"
+                    await processing_msg.update()
                     break
         else:
-            await processing_msg.update(content="❌ 查詢處理失敗，請重試")
+            processing_msg.content = "❌ 查詢處理失敗，請重試"
+            await processing_msg.update()
             
     except Exception as e:
         await cl.Message(content=f"❌ 處理過程中發生錯誤: {str(e)}").send()

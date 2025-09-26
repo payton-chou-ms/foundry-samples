@@ -456,3 +456,25 @@ override.tf.json
 # Ignore CLI configuration files
 .terraformrc
 terraform.rc
+.chainlit/translations/
+.chainlit/config.toml
+mylab/s03_microsoft_fabric/.chainlit/config.toml
+mylab/s03_microsoft_fabric/.chainlit/translations/bn.json
+mylab/s03_microsoft_fabric/.chainlit/translations/de-DE.json
+mylab/s03_microsoft_fabric/.chainlit/translations/el-GR.json
+mylab/s03_microsoft_fabric/.chainlit/translations/en-US.json
+mylab/s03_microsoft_fabric/.chainlit/translations/es.json
+mylab/s03_microsoft_fabric/.chainlit/translations/fr-FR.json
+mylab/s03_microsoft_fabric/.chainlit/translations/gu.json
+mylab/s03_microsoft_fabric/.chainlit/translations/he-IL.json
+mylab/s03_microsoft_fabric/.chainlit/translations/hi.json
+mylab/s03_microsoft_fabric/.chainlit/translations/ja.json
+mylab/s03_microsoft_fabric/.chainlit/translations/kn.json
+mylab/s03_microsoft_fabric/.chainlit/translations/ko.json
+mylab/s03_microsoft_fabric/.chainlit/translations/ml.json
+mylab/s03_microsoft_fabric/.chainlit/translations/mr.json
+mylab/s03_microsoft_fabric/.chainlit/translations/nl.json
+mylab/s03_microsoft_fabric/.chainlit/translations/ta.json
+mylab/s03_microsoft_fabric/.chainlit/translations/te.json
+mylab/s03_microsoft_fabric/.chainlit/translations/zh-CN.json
+mylab/s03_microsoft_fabric/.chainlit/translations/zh-TW.json
