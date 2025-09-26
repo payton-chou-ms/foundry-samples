@@ -492,7 +492,6 @@ I'm your professional hotel search assistant, ready to help you find the perfect
         
         await cl.Message(content=welcome_msg).send()
         
-        # Create suggestion buttons
         actions = []
         for i, question in enumerate(SAMPLE_QUESTIONS):
             actions.append(
@@ -500,7 +499,8 @@ I'm your professional hotel search assistant, ready to help you find the perfect
                     name=f"sample_{i}",
                     value=question,
                     description=question,
-                    label=f"💬 {question[:50]}{'...' if len(question) > 50 else ''}"
+                    label=f"💬 {question[:50]}{'...' if len(question) > 50 else ''}",
+                    payload={"question": question, "index": i}  # 添加 payload
                 )
             )
         
@@ -522,7 +522,8 @@ I'm your professional hotel search assistant, ready to help you find the perfect
 @cl.action_callback("sample_4")
 async def on_action(action):
     """Handle sample question button clicks."""
-    await process_message(action.value)
+    question = action.payload.get("question", SAMPLE_QUESTIONS[action.payload.get("index", 0)])
+    await process_message(question)
 
 
 @cl.on_message
@@ -575,20 +576,26 @@ async def process_message(user_input: str):
                                 if hasattr(content.text, 'value'):
                                     response_text += content.text.value
                     
-                    # Update processing message with response
-                    await processing_msg.update(content=f"🏨 **酒店助理回覆 / Hotel Assistant Response:**\n\n{response_text}")
+                    # 修復：使用正確的 API
+                    processing_msg.content = f"🏨 **酒店助理回覆 / Hotel Assistant Response:**\n\n{response_text}"
+                    await processing_msg.update()
                 else:
-                    await processing_msg.update(content="❌ 未收到有效回應 / No valid response received")
+                    processing_msg.content = "❌ 未收到有效回應 / No valid response received"
+                    await processing_msg.update()
             else:
-                await processing_msg.update(content="❌ 未找到回應訊息 / No response message found")
+                processing_msg.content = "❌ 未找到回應訊息 / No response message found"
+                await processing_msg.update()
                 
         elif run.status == "failed":
-            await processing_msg.update(content=f"❌ 處理失敗 / Processing failed: {run.last_error}")
+            processing_msg.content = f"❌ 處理失敗 / Processing failed: {run.last_error}"
+            await processing_msg.update()
         else:
-            await processing_msg.update(content=f"⚠️ 處理狀態 / Processing status: {run.status}")
+            processing_msg.content = f"⚠️ 處理狀態 / Processing status: {run.status}"
+            await processing_msg.update()
             
     except Exception as e:
-        await processing_msg.update(content=f"❌ 錯誤 / Error: {str(e)}")
+        processing_msg.content = f"❌ 錯誤 / Error: {str(e)}"
+        await processing_msg.update()
 
 
 @cl.on_stop
