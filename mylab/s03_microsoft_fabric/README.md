@@ -1,73 +1,98 @@
-# Microsoft Fabric 計程車數據分析助手
+# Microsoft Fabric Taxi Data Analysis Agent
 
-這是一個基於 Azure AI Agents 的持續對話代理，專門用於分析計程車行程數據。
+This sample demonstrates how to use Azure AI Foundry agents to analyze taxi trip data from Microsoft Fabric lakehouse, with both CLI and web UI interfaces.
 
-## 功能特點
+## Features
 
-- **持續對話**: 與代理保持多輪對話，無需重新啟動
-- **預設查詢**: 包含多種常用的數據查詢範例
-- **自定義查詢**: 支援用戶輸入自定義問題
-- **中文界面**: 友善的繁體中文使用界面
-- **智能分析**: 自動調用適當的數據分析函數
+### Updated Agent Configuration
+- Agent personality defined based on questions from `sample.txt`
+- Focused on specific analysis capabilities:
+  - Public holidays vs weekdays analysis
+  - High-fare trip analysis (>$70)
+  - Daytime vs nighttime patterns
+  - Geographic pickup analysis
+  - Passenger count distribution
 
-## 查詢類型
+### Two Interface Options
 
-1. **基礎查詢與彙總** - 日常統計、月度報表、車輛統計
-2. **歷史趨勢** - 收入趨勢、成長區域分析
-3. **異常與極端** - 高車資行程、異常短程
-4. **地理分布與比較** - 區域分析、城市比較
-5. **時間分析** - 日夜差異、尖峰時段
-6. **乘客/駕駛行為** - 乘客分布、小費分析
-7. **指定欄位統計** - 車資統計、支付方式分析
-8. **綜合儀表板需求** - 完整的 KPI 摘要
+#### 1. Command Line Interface (CLI)
+- Run: `python sample_agents_fabric.py`
+- Interactive menu with sample questions
+- Displays agent ID for tracking
+- Automatic cleanup on exit
 
-## 環境要求
+#### 2. Chainlit Web UI
+- Run: `chainlit run chainlit_app.py`
+- Interactive web interface
+- Sample question hint buttons
+- Agent lifecycle management (shows agent ID, auto-cleanup on UI close)
+- Real-time chat interface
 
-### 必要的環境變數
+## Setup
 
-```bash
-PROJECT_ENDPOINT=https://your-project.cognitiveservices.azure.com/
-MODEL_DEPLOYMENT_NAME=your-model-deployment-name
-```
+1. **Install Dependencies**
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-### 安裝依賴
+2. **Environment Configuration**
+   Copy `.env.template` to `.env` and set:
+   ```
+   PROJECT_ENDPOINT=your_azure_ai_foundry_project_endpoint
+   MODEL_DEPLOYMENT_NAME=your_model_deployment_name
+   ```
 
-```bash
-pip install -r requirements.txt
-```
+3. **Prerequisites**
+   - Azure AI Foundry project with deployed model
+   - Microsoft Fabric lakehouse with taxi trip data
+   - Appropriate Azure credentials
 
-## 使用方法
+## Usage
 
+### CLI Version
 ```bash
 python sample_agents_fabric.py
 ```
 
-### 互動界面
+Choose from:
+- 1-5: Sample questions from sample.txt
+- 9: Custom query
+- 0: Exit
 
-程式啟動後會顯示選單：
-- 選擇預設查詢：輸入數字如 `1.1`, `2.2` 
-- 自定義查詢：輸入 `9` 然後輸入您的問題
-- 退出程式：輸入 `0`
-
-### 查詢範例
-
-- "2025-08-01 這一天的總行程數與總收入是多少？"
-- "請按月份統計 2024 年的搭車趟數與總車資"
-- "哪些區域在最近 6 個月的叫車量成長最多？"
-- "找出異常短程但車資偏高的行程"
-
-## 注意事項
-
-- 目前使用模擬數據進行演示
-- 在實際環境中需要連接到 Microsoft Fabric lakehouse
-- 確保有適當的 Azure 權限和模型部署
-
-## 文件結構
-
+### Chainlit Web UI Version  
+```bash
+chainlit run chainlit_app.py
 ```
-s03_microsoft_fabric/
-├── sample_agents_fabric.py          # 主程式
-├── taxi_query_functions.py          # 計程車數據查詢函數
-├── requirements.txt                 # 依賴套件
-└── README.md                       # 說明文件
-```
+
+Features:
+- Click hint buttons to send sample questions
+- Type custom queries in chat
+- View agent ID in welcome message
+- Automatic agent cleanup when closing browser
+
+## Sample Questions (from sample.txt)
+
+1. Compare taxi trips on public holidays vs regular weekdays
+2. Analyze trips with fare amounts greater than $70
+3. Compare daytime (7:00-19:00) vs nighttime (19:00-7:00) patterns
+4. Identify top 5 pickup zip codes by trip volume
+5. Determine passenger count distribution and mode
+
+## Agent Capabilities
+
+The agent can analyze various aspects of taxi trip data:
+- Trip counts and revenue statistics
+- Geographic patterns and hotspots
+- Time-based analysis (hourly, daily, seasonal)
+- Fare and payment pattern analysis
+- Anomaly detection
+- Trend analysis and insights
+
+## File Structure
+
+- `sample_agents_fabric.py` - CLI version with updated agent configuration
+- `chainlit_app.py` - New Chainlit web UI implementation
+- `taxi_query_functions.py` - Mock data functions (replace with real Fabric queries)
+- `sample.txt` - Sample questions used for agent personality definition
+- `requirements.txt` - Python dependencies
+- `.env.template` - Environment variable template
