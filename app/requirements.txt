@@ -1,0 +1,104 @@
+# Magentic One Team System Requirements
+# Install with: pip install -r requirements.txt
+
+# ===========================================
+# CORE AZURE SERVICES
+# ===========================================
+# Azure AI Projects and Agents
+azure-ai-projects>=1.0.0
+azure-ai-agents>=1.0.0
+
+# Azure Identity for authentication
+azure-identity>=1.15.0
+
+# Azure Search for hotel agent
+azure-search-documents>=11.4.0
+
+# Azure Logic Apps management for email agent  
+azure-mgmt-logic>=10.0.0
+
+# ===========================================
+# SEMANTIC KERNEL FOR ORCHESTRATION
+# ===========================================
+# Semantic Kernel with agent support
+semantic-kernel>=1.0.0
+
+# OpenAI connector for Azure OpenAI
+semantic-kernel[azure_chat_completion]
+
+# ===========================================
+# DATABRICKS INTEGRATION
+# ===========================================
+# Databricks SDK for Genie integration
+databricks-sdk>=0.18.0
+
+# ===========================================
+# WEB UI AND INTERACTION
+# ===========================================
+# Chainlit for interactive web UI
+chainlit>=1.1.0
+
+# ===========================================
+# UTILITIES AND DATA HANDLING
+# ===========================================
+# Environment variable management
+python-dotenv>=1.0.0
+
+# HTTP requests for Logic Apps
+requests>=2.31.0
+
+# JSON handling (built-in but explicit)
+# json - built-in module
+
+# Type hints support
+typing-extensions>=4.8.0
+
+# ===========================================
+# DEVELOPMENT AND TESTING
+# ===========================================
+# Testing framework
+pytest>=7.4.0
+pytest-asyncio>=0.21.0
+
+# Code formatting
+black>=23.0.0
+
+# Linting  
+flake8>=6.0.0
+
+# ===========================================
+# OPTIONAL ENHANCEMENTS
+# ===========================================
+# Better async support
+asyncio-mqtt>=0.16.0
+
+# Rich console output
+rich>=13.0.0
+
+# Progress bars
+tqdm>=4.66.0
+
+# ===========================================
+# VERSION COMPATIBILITY NOTES
+# ===========================================
+# Python 3.8+ required for azure-ai-projects
+# Python 3.9+ recommended for best compatibility
+# Windows/Linux/macOS supported
+
+# ===========================================
+# INSTALLATION INSTRUCTIONS
+# ===========================================
+# 1. Create virtual environment:
+#    python -m venv magentic-env
+#    source magentic-env/bin/activate  # Linux/Mac
+#    magentic-env\Scripts\activate     # Windows
+#
+# 2. Install dependencies:
+#    pip install -r requirements.txt
+#
+# 3. Configure environment:
+#    cp .env.example .env
+#    # Edit .env with your Azure service details
+#
+# 4. Start the application:
+#    chainlit run app/ui/chainlit_entry.py -w
