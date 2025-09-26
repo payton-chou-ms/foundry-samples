@@ -10,6 +10,9 @@ azure-identity>=1.10.0
 # Environment variable management
 python-dotenv>=1.0.0
 
+# Chainlit for interactive UI
+chainlit>=1.0.0
+
 # Optional: Additional utilities
 # azure-core>=1.24.0
 # azure-common>=1.1.28

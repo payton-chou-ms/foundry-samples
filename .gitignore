@@ -414,6 +414,9 @@ samples/agent-catalog/msft-agent-samples/foundry-agent-service-sdk/intent-routin
 # python environments
 .venv
 
+# Chainlit configuration and cache files
+.chainlit/
+
 # Terraform.gitignore
 
 # Local .terraform directories
