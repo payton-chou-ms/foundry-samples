@@ -1,0 +1,30 @@
+{
+    "azure_ai_search": {
+        "messages": {
+            "agent_created": "Agente creado, ID: {agent_id}",
+            "thread_created": "Hilo creado, ID: {thread_id}",
+            "message_created": "Mensaje creado, ID: {message_id}",
+            "run_finished": "Ejecución terminada con estado: {status}",
+            "run_failed": "Ejecución fallida: {error}",
+            "agent_deleted": "Agente eliminado",
+            "searching": "Buscando información...",
+            "search_completed": "Búsqueda completada exitosamente",
+            "processing_results": "Procesando resultados de búsqueda..."
+        },
+        "queries": {
+            "temperature_rating": "¿Cuál es la clasificación de temperatura del saco de dormir cozynights?",
+            "product_information": "¿Puede proporcionar información sobre este producto?",
+            "search_products": "Buscar productos que coincidan con mis criterios"
+        },
+        "instructions": {
+            "agent_instructions": "Eres un agente útil que puede buscar información de productos y proporcionar respuestas detalladas. Cuando los usuarios hagan preguntas, usa la herramienta de Azure AI Search para encontrar información relevante.",
+            "search_helper": "Usa el índice proporcionado para responder preguntas sobre productos, especificaciones y características."
+        },
+        "errors": {
+            "connection_failed": "Error al conectar con el servicio de Azure AI Search",
+            "search_failed": "Operación de búsqueda fallida",
+            "no_results": "No se encontraron resultados para tu consulta",
+            "invalid_query": "Consulta de búsqueda inválida proporcionada"
+        }
+    }
+}

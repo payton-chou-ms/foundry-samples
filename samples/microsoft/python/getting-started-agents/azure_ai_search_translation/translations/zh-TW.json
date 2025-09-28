@@ -1,0 +1,30 @@
+{
+    "azure_ai_search": {
+        "messages": {
+            "agent_created": "已創建代理，ID：{agent_id}",
+            "thread_created": "已創建線程，ID：{thread_id}",
+            "message_created": "已創建消息，ID：{message_id}",
+            "run_finished": "運行完成，狀態：{status}",
+            "run_failed": "運行失敗：{error}",
+            "agent_deleted": "已刪除代理",
+            "searching": "正在搜索信息...",
+            "search_completed": "搜索成功完成",
+            "processing_results": "正在處理搜索結果..."
+        },
+        "queries": {
+            "temperature_rating": "cozynights睡袋的溫度等級是多少？",
+            "product_information": "您能提供這個產品的信息嗎？",
+            "search_products": "搜索符合我條件的產品"
+        },
+        "instructions": {
+            "agent_instructions": "您是一個有用的代理，可以搜索產品信息並提供詳細回覆。當用戶提問時，使用Azure AI搜索工具查找相關信息。",
+            "search_helper": "使用提供的索引來回答有關產品、規格和功能的問題。"
+        },
+        "errors": {
+            "connection_failed": "無法連接到Azure AI搜索服務",
+            "search_failed": "搜索操作失敗",
+            "no_results": "未找到符合查詢的結果",
+            "invalid_query": "提供的搜索查詢無效"
+        }
+    }
+}

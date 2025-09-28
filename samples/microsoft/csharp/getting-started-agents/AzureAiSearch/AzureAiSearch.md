@@ -8,6 +8,19 @@ Search requires an existing Azure AI Search Index. For more information and setu
 guides, see [Azure AI Search Tool Guide](https://learn.microsoft.com/azure/ai-services/agents/how-to/tools/azure-ai-search).
 In this example we will use the existing Azure AI Search Index as a tool for an agent.
 
+## Translation Support
+
+For multi-language support, see the **Python translation-enhanced sample** at:
+`samples/microsoft/python/getting-started-agents/azure_ai_search_translation/`
+
+This enhanced sample includes:
+- Multi-language support (English, Traditional Chinese, Spanish)
+- Automatic language detection
+- Localized messages, queries, and error handling
+- Extensible translation system for adding new languages
+
+The translation features enable global users to interact with Azure AI Search in their preferred language while maintaining the same powerful search capabilities.
+
 1. First we need to create an agent and read the configuration, which will be used in the next steps.
 ```C# Snippet:AgentsAzureAISearchExample_CreateProjectClient
 var projectEndpoint = configuration["ProjectEndpoint"];

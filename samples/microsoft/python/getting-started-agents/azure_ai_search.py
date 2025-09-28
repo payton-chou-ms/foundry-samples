@@ -8,6 +8,9 @@ FILE: azure_ai_search.py
 DESCRIPTION:
     This sample demonstrates how to use agent operations with the Azure AI Search tool from
     the Azure Agents service using a synchronous client.
+    
+    For multi-language support, see the enhanced translation sample:
+    azure_ai_search_translation/azure_ai_search_with_translation.py
 
 USAGE:
     python azure_ai_search.py

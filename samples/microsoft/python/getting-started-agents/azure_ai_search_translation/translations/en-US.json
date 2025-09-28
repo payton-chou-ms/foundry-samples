@@ -1,0 +1,30 @@
+{
+    "azure_ai_search": {
+        "messages": {
+            "agent_created": "Created agent, ID: {agent_id}",
+            "thread_created": "Created thread, ID: {thread_id}",
+            "message_created": "Created message, ID: {message_id}",
+            "run_finished": "Run finished with status: {status}",
+            "run_failed": "Run failed: {error}",
+            "agent_deleted": "Deleted agent",
+            "searching": "Searching for information...",
+            "search_completed": "Search completed successfully",
+            "processing_results": "Processing search results..."
+        },
+        "queries": {
+            "temperature_rating": "What is the temperature rating of the cozynights sleeping bag?",
+            "product_information": "Can you provide information about this product?",
+            "search_products": "Search for products matching my criteria"
+        },
+        "instructions": {
+            "agent_instructions": "You are a helpful agent that can search through product information and provide detailed responses. When users ask questions, use the Azure AI Search tool to find relevant information.",
+            "search_helper": "Use the index provided to answer questions about products, specifications, and features."
+        },
+        "errors": {
+            "connection_failed": "Failed to connect to Azure AI Search service",
+            "search_failed": "Search operation failed",
+            "no_results": "No results found for your query",
+            "invalid_query": "Invalid search query provided"
+        }
+    }
+}
