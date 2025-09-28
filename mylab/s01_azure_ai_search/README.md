@@ -15,13 +15,16 @@
 
 ```
 mylab/s01_azure_ai_search/
-├── step1_create_search_index.py    # 步驟 1: 建立搜索索引
-├── step2_create_ai_agent.py        # 步驟 2: 建立 AI Agent
-├── step3_cleanup_resources.py      # 步驟 3: 清理資源
-├── requirements.txt                # Python 依賴套件清單
-├── .env.example                    # 環境變數範本檔案
-├── README.md                       # 本說明文件
-└── vector-search-quickstart.ipynb  # 原始 Jupyter Notebook
+├── step1_create_search_index.py       # 步驟 1: 建立搜索索引
+├── step2_cli_create_ai_agent.py       # 步驟 2A: 建立 AI Agent (命令行版本)
+├── step2_ui_create_ai_agent.py        # 步驟 2B: 建立 AI Agent (Chainlit UI 版本)
+├── step3_cleanup_resources.py         # 步驟 3: 清理資源
+├── requirements.txt                   # Python 依賴套件清單
+├── .env.example                       # 環境變數範本檔案
+├── README.md                          # 本說明文件
+├── vector-search-quickstart.ipynb     # 完整功能展示的 Jupyter Notebook
+└── Ref/
+    └── ref-azure-search-quickstart.ipynb  # 原始參考的 Jupyter Notebook
 ```
 
 ## 🔧 環境準備
@@ -89,32 +92,52 @@ python step1_create_search_index.py
 - ✅ 文檔上傳完成
 - ✅ 搜索功能測試通過
 
-### 步驟 2: 建立 AI Foundry Agent 與 Chainlit UI 整合
+### 步驟 2: 建立 AI Foundry Agent（兩種執行方式）
 
-**檔案**: `step2_create_ai_agent.py`
+本步驟提供兩種不同的執行方式，您可以根據需要選擇合適的版本：
+
+#### 步驟 2A: 命令行版本
+
+**檔案**: `step2_cli_create_ai_agent.py`
 
 **功能說明**:
 - 初始化 Azure AI Project 客戶端
 - 驗證搜索索引可用性
 - 建立具有酒店搜索專業能力的 AI Agent
-- **新功能**: Chainlit 互動式 UI 整合
-- **新功能**: 樣本問題建議按鈕
-- **新功能**: Agent 生命週期管理（顯示 ID、自動清理）
 - 建立對話線程和測試功能
+- 提供基本的命令行互動
+
+**執行方式**:
+```bash
+python step2_cli_create_ai_agent.py
+```
+
+**適用場景**: 腳本測試、自動化流程、或偏好命令行介面的開發者
+
+#### 步驟 2B: Chainlit 互動式 UI 版本 (推薦)
+
+**檔案**: `step2_ui_create_ai_agent.py`
+
+**功能說明**:
+- 包含步驟 2A 的所有功能
+- **額外功能**: Chainlit 互動式網頁 UI 整合
+- **額外功能**: 樣本問題建議按鈕
+- **額外功能**: Agent 生命週期管理（顯示 ID、自動清理）
+- **額外功能**: 現代化的聊天介面
 
 **執行方式**:
 
-**命令行模式**:
-```bash
-python step2_create_ai_agent.py
-```
-
 **Chainlit 互動式 UI 模式** (推薦):
 ```bash
-chainlit run step2_create_ai_agent.py -w
+chainlit run step2_ui_create_ai_agent.py -w
 ```
 
-**新的 UI 功能特色**:
+**命令行測試模式**:
+```bash
+python step2_ui_create_ai_agent.py
+```
+
+**UI 功能特色**:
 - 🏨 **專業酒店助理**: 基於酒店搜索領域的專門化 AI 助理
 - 🎯 **樣本問題按鈕**: 5 個預設酒店相關問題的快速按鈕
 - 🆔 **Agent ID 顯示**: 在 UI 中顯示當前 Agent 和 Thread ID
@@ -192,21 +215,26 @@ python step3_cleanup_resources.py --force
    ```
    等待索引建立完成
 
-3. **執行步驟 2**:
+3. **執行步驟 2 - 選擇其中一種方式**:
    
-   **命令行模式**:
+   **選項 A: 命令行版本（基本測試）**:
    ```bash
-   python step2_create_ai_agent.py
+   python step2_cli_create_ai_agent.py
    ```
    
-   **Chainlit UI 模式** (推薦):
+   **選項 B: Chainlit UI 版本（推薦使用）**:
    ```bash
-   chainlit run step2_create_ai_agent.py -w
+   chainlit run step2_ui_create_ai_agent.py -w
    ```
    - 在瀏覽器中會自動開啟 Chainlit UI
    - 可以點擊樣本問題按鈕快速測試
    - Agent ID 會顯示在介面中
    - 關閉瀏覽器時會自動清理 Agent
+   
+   **選項 B 的命令行測試模式**:
+   ```bash
+   python step2_ui_create_ai_agent.py
+   ```
 
 4. **執行步驟 3**:
    ```bash
