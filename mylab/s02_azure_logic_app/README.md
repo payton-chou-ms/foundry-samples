@@ -6,7 +6,7 @@
 
 - **Logic Apps 整合**: 透過 Azure Logic Apps 執行自動化工作流程
 - **電子郵件自動化**: 使用 Logic Apps 發送自動化電子郵件
-- **命令行介面**: `logic_apps.py` 提供基本的命令行執行
+- **命令行介面**: `cli_logic_apps.py` 提供基本的命令行執行
 - **Web UI 介面**: `ui_logic_apps.py` 提供 Chainlit 互動式網頁介面
 - **預設任務按鈕**: UI 版本包含5個預設自動化任務的快速執行按鈕
 - **即時狀態更新**: 工作流程執行時的即時狀態回饋
@@ -23,13 +23,13 @@
 
 ```
 mylab/s02_azure_logic_app/
-├── logic_apps.py           # 命令行版本的 Logic App 整合
-├── ui_logic_apps.py        # Chainlit Web UI 版本
-├── user_logic_apps.py      # Logic Apps 工具類別實作
-├── user_functions.py       # 工具函數（日期/時間、天氣、計算等）
-├── requirements.txt        # Python 依賴套件清單
-├── .env.example           # 環境變數範本檔案
-└── README.md              # 本說明文件
+├── cli_logic_apps.py      # 命令行版本的 Logic App 整合
+├── ui_logic_apps.py       # Chainlit Web UI 版本
+├── user_logic_apps.py     # Logic Apps 工具類別實作
+├── user_functions.py      # 工具函數（日期/時間、天氣、計算等）
+├── requirements.txt       # Python 依賴套件清單
+├── .env.example          # 環境變數範本檔案
+└── README.md             # 本說明文件
 ```
 
 ## 安裝與設定
@@ -61,12 +61,12 @@ cp .env.example .env
 
 ## 使用方式
 
-### 命令行版本 (`logic_apps.py`)
+### 命令行版本 (`cli_logic_apps.py`)
 
 執行命令行版本：
 
 ```bash
-python logic_apps.py
+python cli_logic_apps.py
 ```
 
 這個版本會：
@@ -114,7 +114,7 @@ Logic Apps agent 可以：
 
 ## 檔案結構
 
-- `logic_apps.py` - 命令行版本的 Logic App 整合
+- `cli_logic_apps.py` - 命令行版本的 Logic App 整合
 - `ui_logic_apps.py` - Chainlit Web UI 版本
 - `user_logic_apps.py` - Logic Apps 工具類別實作
 - `user_functions.py` - 工具函數（日期/時間、天氣、計算等）
@@ -150,8 +150,8 @@ Logic Apps agent 可以：
 
 ## 版本比較
 
-| 功能 | `logic_apps.py` | `ui_logic_apps.py` |
-|------|----------------|-------------------|
+| 功能 | `cli_logic_apps.py` | `ui_logic_apps.py` |
+|------|---------------------|-------------------|
 | 介面 | 命令行/CLI | Web UI (Chainlit) |
 | 互動 | 單次執行 | 互動式聊天 |
 | 範例任務 | 無 | 5 個預設按鈕 |

@@ -5,32 +5,32 @@
 # ------------------------------------
 
 """
-DESCRIPTION:
-    This sample demonstrates how to use agents with Chainlit UI to execute Logic Apps workflows
-    including sending emails and other automated tasks. Features include sample action buttons,
-    agent lifecycle management, and interactive chat interface.
+說明:
+    此範例展示如何使用代理程式搭配 Chainlit UI 來執行 Logic Apps 工作流程，
+    包括發送電子郵件和其他自動化任務。功能包括範例動作按鈕、
+    代理程式生命週期管理和互動式聊天介面。
 
-PREREQUISITES:
-    1) Create a Logic App within the same resource group as your Azure AI Project in Azure Portal
-    2) Configure your Logic App to send emails with HTTP request trigger accepting JSON with 
-       'to', 'subject', and 'body' parameters
-    3) Set up your Azure AI Foundry project with appropriate model deployment
+前置條件:
+    1) 在 Azure 入口網站中，於與您的 Azure AI 專案相同的資源群組內建立 Logic App
+    2) 設定您的 Logic App 來發送電子郵件，需要 HTTP 要求觸發器接受包含
+       'to'、'subject' 和 'body' 參數的 JSON
+    3) 使用適當的模型部署設定您的 Azure AI Foundry 專案
     
-USAGE:
+使用方式:
     chainlit run ui_logic_apps.py
  
-    Before running the sample:
+    執行範例前:
  
     pip install azure-ai-projects azure-identity python-dotenv chainlit
 
-    Set these environment variables with your own values:
-    1) PROJECT_ENDPOINT - The project endpoint from your Azure AI Foundry project
-    2) MODEL_DEPLOYMENT_NAME - The deployment name of the AI model
-    3) AZURE_SUBSCRIPTION_ID - Your Azure subscription ID
-    4) AZURE_RESOURCE_GROUP - Your Azure resource group name
-    5) LOGIC_APP_NAME - The name of your Logic App
-    6) TRIGGER_NAME - The name of the trigger in your Logic App
-    7) RECIPIENT_EMAIL - Default recipient email address
+    請使用您自己的值設定以下環境變數:
+    1) PROJECT_ENDPOINT - 來自您的 Azure AI Foundry 專案的專案端點
+    2) MODEL_DEPLOYMENT_NAME - AI 模型的部署名稱
+    3) AZURE_SUBSCRIPTION_ID - 您的 Azure 訂用帳戶 ID
+    4) AZURE_RESOURCE_GROUP - 您的 Azure 資源群組名稱
+    5) LOGIC_APP_NAME - 您的 Logic App 名稱
+    6) TRIGGER_NAME - Logic App 中觸發器的名稱
+    7) RECIPIENT_EMAIL - 預設收件人電子郵件地址
 """
 
 import os
