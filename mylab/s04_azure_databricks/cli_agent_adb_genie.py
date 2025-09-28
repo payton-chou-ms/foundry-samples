@@ -4,25 +4,25 @@
 # ------------------------------------
 
 """
-DESCRIPTION:
-    This sample demonstrates how to use the Databricks connector in 
-    Azure AI Foundry with Databricks to access Genie (using the Genie API).
-    Here we ask Genie two questions and maintain the conversation context between them.
+說明:
+    此範例展示如何在 Azure AI Foundry 中使用 Databricks 連接器搭配 Databricks 
+    來存取 Genie (使用 Genie API)。
+    在此我們向 Genie 提出兩個問題，並在兩個問題之間保持對話上下文。
 
-USAGE:
+使用方式:
     python sample_agents_functions.py
 
-    Before running the sample:
+    執行範例前:
 
     pip install azure-ai-projects azure-ai-agents azure-identity databricks-sdk
 
-    Set these environment variables in .env file:
-    1) FOUNDRY_PROJECT_ENDPOINT - The endpoint of your Azure AI Foundry project, as found in the "Overview" tab
-       in your Azure AI Foundry project.
-    2) FOUNDRY_DATABRICKS_CONNECTION_NAME - The name of the Databricks connection, as found in the "Connected Resources" under "Management Center" tab
-       in your Azure AI Foundry project.
-    2) MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in 
-       the "Models + endpoints" tab in your Azure AI Foundry project.
+    請在 .env 檔案中設定以下環境變數:
+    1) FOUNDRY_PROJECT_ENDPOINT - 您的 Azure AI Foundry 專案端點，可在 Azure AI Foundry 
+       專案的「概觀」頁籤中找到。
+    2) FOUNDRY_DATABRICKS_CONNECTION_NAME - Databricks 連接的名稱，可在 Azure AI Foundry 
+       專案「管理中心」頁籤下的「連接的資源」中找到。
+    3) MODEL_DEPLOYMENT_NAME - AI 模型的部署名稱，可在 Azure AI Foundry 專案
+       「模型 + 端點」頁籤的「名稱」欄位中找到。
 """
 
 import json

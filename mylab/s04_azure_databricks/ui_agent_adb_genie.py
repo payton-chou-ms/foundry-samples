@@ -4,25 +4,24 @@
 # ------------------------------------
 
 """
-DESCRIPTION:
-    This sample demonstrates how to use the Databricks connector in 
-    Azure AI Foundry with Databricks to access Genie (using the Genie API)
-    through a Chainlit UI with sample question buttons and agent lifecycle management.
+說明:
+    此範例展示如何在 Azure AI Foundry 中使用 Databricks 連接器搭配 Databricks 
+    來存取 Genie (使用 Genie API)，透過具有範例問題按鈕和 agent 生命週期管理的 Chainlit UI。
 
-USAGE:
+使用方式:
     chainlit run chainlit_agent_adb_genie.py
 
-    Before running the sample:
+    執行範例前:
 
     pip install azure-ai-projects azure-ai-agents azure-identity databricks-sdk chainlit
 
-    Set these environment variables in .env file:
-    1) FOUNDRY_PROJECT_ENDPOINT - The endpoint of your Azure AI Foundry project, as found in the "Overview" tab
-       in your Azure AI Foundry project.
-    2) FOUNDRY_DATABRICKS_CONNECTION_NAME - The name of the Databricks connection, as found in the "Connected Resources" under "Management Center" tab
-       in your Azure AI Foundry project.
-    2) MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in 
-       the "Models + endpoints" tab in your Azure AI Foundry project.
+    請在 .env 檔案中設定以下環境變數:
+    1) FOUNDRY_PROJECT_ENDPOINT - 您的 Azure AI Foundry 專案端點，可在 Azure AI Foundry 
+       專案的「概觀」頁籤中找到。
+    2) FOUNDRY_DATABRICKS_CONNECTION_NAME - Databricks 連接的名稱，可在 Azure AI Foundry 
+       專案「管理中心」頁籤下的「連接的資源」中找到。
+    3) MODEL_DEPLOYMENT_NAME - AI 模型的部署名稱，可在 Azure AI Foundry 專案
+       「模型 + 端點」頁籤的「名稱」欄位中找到。
 """
 
 import json
@@ -56,27 +55,27 @@ if not FOUNDRY_DATABRICKS_CONNECTION_NAME:
 
 # sample.txt 中的指令
 AGENT_INSTRUCTIONS = """
-You are a data analysis agent connected to the Databricks "samples.nyctaxi.trips" dataset. 
-Your role is to help users explore and analyze taxi trip data. 
-You should respond to natural language queries by generating SQL queries and summarizing results.
+您是一個連接到 Databricks "samples.nyctaxi.trips" 資料集的數據分析代理。
+您的角色是協助使用者探索和分析計程車行程數據。
+您應該透過產生 SQL 查詢並總結結果來回應自然語言查詢。
 
-You can answer the following types of questions:
-1. Fare statistics: e.g., average, maximum, or minimum fare amount.
-2. Time-based trends: e.g., trip counts by hour, day, or week.
-3. Distance vs fare analysis: e.g., correlation between distance and fare, fare distribution by distance.
-4. Geographic comparisons: e.g., which pickup or dropoff zip codes have the highest average fare.
-5. Outlier detection: e.g., identify trips with unusually high fares relative to distance.
+您可以回答以下類型的問題：
+1. 車資統計：例如，平均、最高或最低車資金額。
+2. 時間趨勢：例如，依小時、日期或週別計算的行程次數。
+3. 距離與車資分析：例如，距離與車資的相關性、依距離分布的車資。
+4. 地理比較：例如，哪些接載或下車郵遞區號具有最高的平均車資。
+5. 異常值偵測：例如，識別相較於距離具有異常高車資的行程。
 
-Always explain your answer clearly, and when relevant, show both the query and a short natural-language summary of the results.
+請始終清楚解釋您的答案，並在相關時同時顯示查詢和結果的簡短自然語言摘要。
 """
 
 # sample.txt 中的範例問題
 SAMPLE_QUESTIONS = [
-    "What is the average fare amount per trip? (平均車資)",
-    "How does the number of trips vary by hour of the day or day of the week? (依時間的趨勢)",
-    "What is the correlation between trip distance and fare amount? (距離 vs 車資關係)",
-    "Which pickup zip codes have the highest average fares? (地區比較)",
-    "Are there any outlier trips with unusually high fare amounts compared to their distance? (異常值分析)"
+    "每趟行程的平均車資金額是多少？ (平均車資)",
+    "行程數量如何依一天中的小時或一週中的日期變化？ (依時間的趨勢)",
+    "行程距離與車資金額之間的相關性是什麼？ (距離 vs 車資關係)",
+    "哪些接載郵遞區號具有最高的平均車資？ (地區比較)",
+    "是否有相較於距離具有異常高車資金額的異常行程？ (異常值分析)"
 ]
 
 ##################
@@ -213,13 +212,13 @@ async def start():
         cl.user_session.set("conversation_id", None)
 
         # 發送歡迎訊息，包含 agent ID 和範例問題
-        welcome_msg = f"""# Welcome to Databricks Taxi Data Analysis Agent! 🚕
+        welcome_msg = f"""# 歡迎使用 Databricks 計程車數據分析代理！ 🚕
 
-**Agent ID:** `{agent.id}`
+**代理 ID：** `{agent.id}`
 
-I'm here to help you analyze the NYC taxi trip dataset. You can ask me questions about fare statistics, time-based trends, distance vs fare relationships, geographic comparisons, and outlier detection.
+我在這裡協助您分析 NYC 計程車行程資料集。您可以詢問我關於車資統計、時間趨勢、距離與車資關係、地理比較和異常值偵測的問題。
 
-**Try these sample questions:**"""
+**試試這些範例問題：**"""
 
         await cl.Message(content=welcome_msg).send()
 
@@ -236,7 +235,7 @@ I'm here to help you analyze the NYC taxi trip dataset. You can ask me questions
             )
 
         await cl.Message(
-            content="Click any button below to ask a sample question:",
+            content="點擊下方任一按鈕來提出範例問題：",
             actions=actions
         ).send()
 

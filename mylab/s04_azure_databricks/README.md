@@ -1,90 +1,119 @@
-# AI Foundry Connections - Azure Databricks with Genie
+# Azure Databricks 與 Genie 整合 - AI Foundry 連接
 
-This repository hosts samples and examples for using AI Foundry Connections with Agents, specifically for Azure Databricks integration with Genie API.
+此專案展示如何使用 AI Foundry 連接與代理程式，特別是針對 Azure Databricks 與 Genie API 的整合，提供 NYC 計程車數據分析功能。
 
-## Overview
+## 📋 專案概述
 
-AI Foundry Connections provides integration capabilities between various resources and AI Foundry Agent. This repository contains example implementations, best practices, and starter templates to help you build intelligent applications using AI Foundry.
+AI Foundry 連接提供各種資源與 AI Foundry 代理程式之間的整合能力。此專案包含範例實作、最佳實務和入門模板，協助您使用 AI Foundry 建構智慧應用程式。
+
+## 🎯 主要功能
+
+- **互動式 UI**：基於聊天的介面，附有範例問題按鈕
+- **代理程式生命週期管理**：顯示代理程式 ID 並在會話結束時自動清理
+- **範例問題**：為常見分析任務預先設定的按鈕
+- **即時分析**：連接到 Databricks Genie 進行即時數據分析
+- **會話管理**：在多個問題間維持對話上下文
 
 ## 📁 檔案結構
 
 ```
 mylab/s04_azure_databricks/
-├── .chainlit/                              # Chainlit 設定目錄
-├── .env.template                           # 環境變數範本檔案
-├── CHAINLIT_README.md                      # Chainlit 應用詳細說明文件
-├── README.md                               # 本說明文件
-├── chainlit.md                             # Chainlit 應用介面說明
-├── chainlit_agent_adb_genie.py            # Chainlit 互動式 UI 版本
-├── sample_agent_adb_genie_conversation.py # 命令行版本範例
-├── sample.txt                              # Agent 指令和範例問題
-└── requirements.txt                        # Python 相依套件清單
+├── .chainlit/                          # Chainlit 設定目錄
+├── .env.template                       # 環境變數範本檔案
+├── README.md                           # 本說明文件（整合版）
+├── cli_agent_adb_genie.py             # 命令行版本範例
+├── ui_agent_adb_genie.py              # Chainlit 互動式 UI 版本
+└── requirements.txt                    # Python 相依套件清單
 ```
 
-## Samples
-
-The samples in this repository demonstrate:
-- How to connect AI Foundry services with agents
-- Integration patterns for different use cases  
-- Best practices for implementation
-- Interactive Chainlit UI for data analysis with sample question buttons
-
-## Available Applications
+## 🚀 可用應用程式
 
 ### 1. **Chainlit 互動式 UI** 🆕 (推薦)
-- `chainlit_agent_adb_genie.py` - **完整互動式網頁 UI，附有範例問題按鈕**
-- Features:
-  - 🚕 **互動式聊天介面**，用於 NYC 計程車數據分析
-  - 📊 **預先設定的範例問題按鈕**（車資統計、時間趨勢等）
-  - 🆔 **Agent 生命週期管理**（顯示 agent ID，自動清理）
-  - ⚡ **透過 Databricks Genie API 進行即時分析**
-  - 🔄 **具有對話上下文的會話管理**
+**檔案**: `ui_agent_adb_genie.py`
 
-### 2. Command Line Samples
-- `sample_agent_adb_genie_conversation.py` - Agent with conversation context
+**主要功能**:
+- 🚕 **互動式聊天介面**：專為 NYC 計程車數據分析設計
+- 📊 **預設範例問題按鈕**：車資統計、時間趨勢、地理比較等
+- 🆔 **代理程式生命週期管理**：顯示代理程式 ID，會話結束時自動清理
+- ⚡ **透過 Databricks Genie API 進行即時分析**
+- 🔄 **具有對話上下文的會話管理**
 
-## Quick Start - Chainlit UI
+### 2. **命令行範例**
+**檔案**: `cli_agent_adb_genie.py`
 
-1. **安裝相依套件：**
-   ```bash
-   pip install -r requirements.txt
-   ```
+**功能說明**:
+- 展示如何在命令行環境中使用 Databricks Genie
+- 維持對話上下文的代理程式對話
+- 適合自動化腳本和批次處理
 
-2. **設定環境變數：**
-   ```bash
-   cp .env.template .env
-   # 編輯 .env 檔案，填入您的 Azure AI Foundry 專案詳細資訊
-   ```
+## 🛠️ 環境準備
 
-3. **執行互動式 UI：**
-   ```bash
-   chainlit run chainlit_agent_adb_genie.py
-   ```
+### 系統需求
+- Python 3.12 或更新版本
+- [Azure 訂閱帳戶][azure_sub]
+- [Azure AI Foundry 專案](https://learn.microsoft.com/azure/ai-studio/how-to/create-projects)
+- Azure CLI 已安裝並登入
 
-4. **開啟瀏覽器** 至顯示的 URL（通常是 http://localhost:8000）
+### 權限需求
+- 適當的角色指派，請參閱 [Azure AI Foundry 入口網站中的角色型存取控制](https://learn.microsoft.com/azure/ai-foundry/concepts/rbac-ai-foundry)
+- 可透過 Azure 入口網站中 Azure AI 專案資源的「存取控制 (IAM)」頁籤完成角色指派
 
-5. **點擊範例問題按鈕** 或輸入您自己的 NYC 計程車數據問題！
+## 🎮 快速開始 - Chainlit UI
 
-詳細說明請參見 [CHAINLIT_README.md](CHAINLIT_README.md)。
+### 1. 安裝相依套件
+```bash
+pip install -r requirements.txt
+```
 
-## Agent Configuration
+### 2. 設定環境變數
+```bash
+cp .env.template .env
+# 編輯 .env 檔案，填入您的設定值
+```
 
-Agent 專門設定用於 **NYC 計程車行程數據分析**，指令基於 `sample.txt`：
+必要的環境變數：
+```env
+FOUNDRY_PROJECT_ENDPOINT=your_project_endpoint
+FOUNDRY_DATABRICKS_CONNECTION_NAME=your_databricks_connection
+MODEL_DEPLOYMENT_NAME=gpt-4o
+```
 
-- **數據集**：連接至 Databricks "samples.nyctaxi.trips" 數據集  
-- **能力**：車資統計、基於時間的趨勢、距離與車資分析、地理比較、異常值檢測
-- **範例問題**：5 個預先設定的常見分析任務按鈕
-- **回應風格**：清晰的解釋，包含 SQL 查詢和自然語言摘要
+### 3. 執行互動式 UI
+```bash
+chainlit run ui_agent_adb_genie.py
+```
 
-## Prerequisites
+### 4. 開啟瀏覽器
+前往終端機顯示的 URL（通常是 http://localhost:8000）
 
-- Python 3.12 或更新版本。
-- An [Azure subscription][azure_sub].
-- A [project in Azure AI Foundry](https://learn.microsoft.com/azure/ai-studio/how-to/create-projects).
-- The Project endpoints. It can be found in your Azure AI Foundry project overview page.
-- Entra ID is needed to authenticate the client. Your application needs an object that implements the [TokenCredential](https://learn.microsoft.com/python/api/azure-core/azure.core.credentials.tokencredential) interface. Code samples here use [DefaultAzureCredential](https://learn.microsoft.com/python/api/azure-identity/azure.identity.defaultazurecredential). To get that working, you will need:
-  * An appropriate role assignment. see [Role-based access control in Azure AI Foundry portal](https://learn.microsoft.com/azure/ai-foundry/concepts/rbac-ai-foundry). Role assigned can be done via the "Access Control (IAM)" tab of your Azure AI Project resource in the Azure portal.
-  * [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli) installed.
-  * You are logged into your Azure account by running `az login`.
-  * Note that if you have multiple Azure subscriptions, the subscription that contains your Azure AI Project resource must be your default subscription. Run `az account list --output table` to list all your subscription and see which one is the default. Run `az account set --subscription "Your Subscription ID or Name"` to change your default subscription.
+### 5. 開始分析
+點擊範例問題按鈕或輸入您自己的 NYC 計程車數據問題！
 
+## 📊 範例問題類型
+
+應用程式提供以下類型分析的預設按鈕：
+
+### 1. **車資統計** (平均車資)
+- "每趟行程的平均車資金額是多少？"
+
+### 2. **時間趨勢** (依時間的趨勢)
+- "行程數量如何依一天中的小時或一週中的日期變化？"
+
+### 3. **距離與車資分析** (距離 vs 車資關係)
+- "行程距離與車資金額之間的相關性是什麼？"
+
+### 4. **地理比較** (地區比較)
+- "哪些接載郵遞區號具有最高的平均車資？"
+
+### 5. **異常值檢測** (異常值分析)
+- "是否有相較於距離具有異常高車資金額的異常行程？"
+
+## 🤖 代理程式設定
+
+代理程式專門針對 **NYC 計程車行程數據分析** 進行設定：
+
+- **資料集**：連接至 Databricks "samples.nyctaxi.trips" 資料集
+- **角色**：計程車行程數據的數據分析專家
+- **能力**：SQL 查詢產生和結果摘要
+- **回應風格**：清楚的解釋，包含查詢和自然語言摘要
+- **支援功能**：車資統計、時間趨勢、距離與車資分析、地理比較、異常值檢測
