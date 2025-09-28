@@ -44,19 +44,19 @@ def initialize_environment():
     """Initialize environment variables and credentials."""
     print("🔧 初始化環境變數和認證 / Initializing environment and credentials...")
     
-    # Load environment variables from .env file
+    # 從 .env 檔案載入環境變數 / Load environment variables from .env file
     load_dotenv(override=True)
     
-    # AI Project settings
+    # AI Project 設定 / AI Project settings
     project_endpoint = os.environ["PROJECT_ENDPOINT"]
     model_deployment_name = os.environ["MODEL_DEPLOYMENT_NAME"]
     
-    # Search settings
+    # 搜索設定 / Search settings
     search_endpoint = os.environ["AZURE_SEARCH_ENDPOINT"]
     search_api_key = os.getenv("AZURE_SEARCH_API_KEY")
     index_name = os.getenv("AZURE_SEARCH_INDEX", "vector-search-quickstart")
     
-    # Initialize credentials
+    # 初始化認證 / Initialize credentials
     project_credential = DefaultAzureCredential(exclude_interactive_browser_credential=False)
     search_credential = AzureKeyCredential(search_api_key)
     
@@ -86,13 +86,13 @@ def verify_search_index(search_endpoint, search_credential, index_name):
             credential=search_credential
         )
         
-        # Try to search for documents
+        # 嘗試搜索文檔 / Try to search for documents
         results = search_client.search(search_text="*", top=1)
         result_count = 0
         
         for result in results:
             result_count += 1
-            break  # Just check if we have any results
+            break  # 只檢查是否有任何結果 / Just check if we have any results
             
         if result_count > 0:
             print(f"✅ 索引驗證成功，包含文檔 / Index verified successfully with documents")
@@ -112,7 +112,7 @@ def create_ai_agent_with_search(config):
     """Create an AI agent with Azure AI Search integration."""
     print(f"\n🤖 建立 AI Agent 與搜索整合 / Creating AI agent with search integration...")
     
-    # Initialize the AI Project Client - 移除 api_version 參數
+    # 初始化 AI Project 客戶端 / Initialize the AI Project Client
     project_client = AIProjectClient(
         endpoint=config["project_endpoint"],
         credential=config["project_credential"],
@@ -120,9 +120,9 @@ def create_ai_agent_with_search(config):
     
     print(f"✅ AI Project 客戶端初始化成功 / AI Project client initialized")
     
-    # Create the AI agent with search capabilities
-    # Note: In the original notebook, this was using FileSearchTool with vector stores
-    # Here we're creating a basic agent that can be extended with search tools
+    # 建立具有搜索功能的 AI agent / Create the AI agent with search capabilities
+    # 注意：在原始 notebook 中，這使用了 FileSearchTool 與向量存儲 / Note: In the original notebook, this was using FileSearchTool with vector stores
+    # 這裡我們建立一個可以擴展搜索工具的基本 agent / Here we're creating a basic agent that can be extended with search tools
     agent = project_client.agents.create_agent(
         model=config["model_deployment_name"],
         name="hotel-search-agent",
@@ -156,8 +156,8 @@ The search index contains the following types of hotel data:
 - Amenities and tags
 - Parking and renovation dates
 """,
-        # Note: Tools integration would be added here in a full implementation
-        # For now, we create a basic agent that can be extended
+        # 注意：工具整合應該在完整實現中加入此處 / Note: Tools integration would be added here in a full implementation
+        # 目前我們建立一個可以擴展的基本 agent / For now, we create a basic agent that can be extended
     )
     
     print(f"✅ AI Agent 建立成功 / AI agent created successfully")
@@ -185,21 +185,21 @@ def ask_agent_question(project_client, agent, thread, question):
     print(f"🤖 Agent 處理中... / Agent processing...")
     
     try:
-        # Create a message in the thread
+        # 在線程中建立訊息 / Create a message in the thread
         message = project_client.agents.messages.create(
             thread_id=thread.id,
             role=MessageRole.USER,
             content=question
         )
         
-        # Create and process the run
+        # 建立並處理運行 / Create and process the run
         run = project_client.agents.runs.create_and_process(
             thread_id=thread.id,
             agent_id=agent.id
         )
         
         if run.status == "completed":
-            # Get the agent's response
+            # 取得 agent 的回應 / Get the agent's response
             messages = project_client.agents.messages.list(
                 thread_id=thread.id,
                 order=ListSortOrder.DESCENDING,
@@ -240,7 +240,7 @@ def test_agent_capabilities(project_client, agent, thread):
     print(f"\n🧪 測試 Agent 功能 / Testing agent capabilities...")
     print("=" * 60)
     
-    # Test questions about hotels
+    # 關於酒店的測試問題 / Test questions about hotels
     test_questions = [
         "What hotels do you know about? Can you tell me about them?",
         "Can you recommend a boutique hotel in New York?",
@@ -278,7 +278,7 @@ def compare_with_without_search_tools(project_client, config):
     test_question = "Tell me about luxury hotels with unique amenities."
     
     try:
-        # Create a simple agent without search tools for comparison
+        # 建立一個無搜索工具的簡單 agent 以供比較 / Create a simple agent without search tools for comparison
         simple_agent = project_client.agents.create_agent(
             model=config["model_deployment_name"],
             name="simple-agent-no-search",
@@ -291,7 +291,7 @@ def compare_with_without_search_tools(project_client, config):
         print("-" * 50)
         simple_response = ask_agent_question(project_client, simple_agent, simple_thread, test_question)
         
-        # Clean up simple agent
+        # 清理簡單 agent / Clean up simple agent
         project_client.agents.delete_agent(simple_agent.id)
         
         print(f"\n📊 分析 / Analysis:")
@@ -311,14 +311,14 @@ def validate_agent_search_integration(search_endpoint, search_credential, index_
     print(f"\n✅ 驗證 Agent 搜索整合潛力 / Validating agent search integration potential...")
     
     try:
-        # Test direct search to ensure it's working
+        # 測試直接搜索以確保其正常運作 / Test direct search to ensure it's working
         search_client = SearchClient(
             endpoint=search_endpoint,
             index_name=index_name,
             credential=search_credential
         )
         
-        # Test search functionality that the agent would use
+        # 測試 agent 將使用的搜索功能 / Test search functionality that the agent would use
         test_searches = [
             {"query": "boutique hotel", "description": "文字搜索 / Text search"},
             {"query": "*", "filter": "Rating gt 4.0", "description": "篩選搜索 / Filter search"},
@@ -364,10 +364,10 @@ def main():
     print("=" * 80)
     
     try:
-        # Step 1: Initialize environment
+        # 步驟 1: 初始化環境 / Step 1: Initialize environment
         config = initialize_environment()
         
-        # Step 2: Verify search index
+        # 步驟 2: 驗證搜索索引 / Step 2: Verify search index
         if not verify_search_index(
             config["search_endpoint"], 
             config["search_credential"], 
@@ -377,19 +377,19 @@ def main():
             print("❌ Search index verification failed, please run step 1 first")
             return {"success": False, "error": "Search index not available"}
         
-        # Step 3: Create AI agent with search capabilities
+        # 步驟 3: 建立具有搜索功能的 AI agent / Step 3: Create AI agent with search capabilities
         project_client, agent = create_ai_agent_with_search(config)
         
-        # Step 4: Create conversation thread
+        # 步驟 4: 建立對話線程 / Step 4: Create conversation thread
         thread = create_conversation_thread(project_client)
         
-        # Step 5: Test agent capabilities
+        # 步驟 5: 測試 agent 功能 / Step 5: Test agent capabilities
         responses = test_agent_capabilities(project_client, agent, thread)
         
-        # Step 6: Compare with simple agent
+        # 步驟 6: 與簡單 agent 比較 / Step 6: Compare with simple agent
         compare_with_without_search_tools(project_client, config)
         
-        # Step 7: Validate search integration potential
+        # 步驟 7: 驗證搜索整合潛力 / Step 7: Validate search integration potential
         validate_agent_search_integration(
             config["search_endpoint"],
             config["search_credential"],
@@ -401,7 +401,7 @@ def main():
         print(f"📝 Thread ID: {thread.id}")
         print(f"📝 已準備好用於清理 / Ready for cleanup")
         
-        # Return important information for cleanup
+        # 回傳重要資訊供清理使用 / Return important information for cleanup
         return {
             "success": True,
             "agent_id": agent.id,

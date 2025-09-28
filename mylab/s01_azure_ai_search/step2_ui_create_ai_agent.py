@@ -41,7 +41,7 @@ from azure.ai.projects import AIProjectClient
 from azure.ai.agents.models import MessageRole, ListSortOrder
 from azure.search.documents import SearchClient
 
-# Chainlit imports
+# Chainlit 匯入 / Chainlit imports
 import chainlit as cl
 from typing import Optional
 
@@ -408,13 +408,13 @@ def main():
         print(f"📝 Thread ID: {thread.id}")
         print(f"📝 已準備好用於清理 / Ready for cleanup")
         
-        # Show Chainlit usage instructions
+        # 顯示 Chainlit 使用說明 / Show Chainlit usage instructions
         print(f"\n🚀 **如要使用互動式 UI / To use interactive UI:**")
         print(f"   chainlit run step2_create_ai_agent.py -w")
         print(f"\n🧹 **記得清理資源 / Remember to clean up resources:**")
         print(f"   python step3_cleanup_resources.py")
         
-        # Return important information for cleanup
+        # 回傳重要資訊供清理使用 / Return important information for cleanup
         return {
             "success": True,
             "agent_id": agent.id,
@@ -432,13 +432,13 @@ def main():
 
 # ================== CHAINLIT UI COMPONENTS ==================
 
-# Global variables to store agent and client
+# 儲存 agent 和 client 的全域變數 / Global variables to store agent and client
 project_client: Optional[AIProjectClient] = None
 agent = None
 thread = None
 config = None
 
-# Sample questions for suggestion buttons
+# 建議問題按鈕的樣本問題 / Sample questions for suggestion buttons
 SAMPLE_QUESTIONS = [
     "What hotels do you know about? Can you tell me about them?",
     "Can you recommend a boutique hotel in New York?",
@@ -454,10 +454,10 @@ async def start():
     global project_client, agent, thread, config
     
     try:
-        # Initialize environment and create agent
+        # 初始化環境並建立 agent / Initialize environment and create agent
         config = initialize_environment()
         
-        # Verify search index
+        # 驗證搜索索引 / Verify search index
         if not verify_search_index(
             config["search_endpoint"], 
             config["search_credential"], 
@@ -469,15 +469,15 @@ async def start():
             ).send()
             return
         
-        # Create agent and thread
+        # 建立 agent 和線程 / Create agent and thread
         project_client, agent = create_ai_agent_with_search(config)
         thread = create_conversation_thread(project_client)
         
-        # Store agent info in session
+        # 在會話中儲存 agent 資訊 / Store agent info in session
         cl.user_session.set("agent_id", agent.id)
         cl.user_session.set("thread_id", thread.id)
         
-        # Welcome message with agent info and suggestion buttons
+        # 歡迎訊息包含 agent 資訊和建議按鈕 / Welcome message with agent info and suggestion buttons
         welcome_msg = f"""🏨 **酒店搜索助理已就緒！/ Hotel Search Assistant Ready!**
 
 🆔 **Agent ID**: `{agent.id}`
@@ -540,25 +540,25 @@ async def process_message(user_input: str):
         await cl.Message(content="❌ Agent 未初始化，請重新啟動 / Agent not initialized, please restart").send()
         return
     
-    # Show processing message
+    # 顯示處理中訊息 / Show processing message
     processing_msg = await cl.Message(content="🤖 處理中... / Processing...").send()
     
     try:
-        # Create user message in thread
+        # 在線程中建立使用者訊息 / Create user message in thread
         project_client.agents.messages.create(
             thread_id=thread.id,
             role=MessageRole.USER,
             content=user_input
         )
         
-        # Create and process run
+        # 建立並處理運行 / Create and process run
         run = project_client.agents.runs.create_and_process(
             thread_id=thread.id,
             agent_id=agent.id
         )
         
         if run.status == "completed":
-            # Get agent response
+            # 取得 agent 回應 / Get agent response
             messages = project_client.agents.messages.list(
                 thread_id=thread.id,
                 order=ListSortOrder.DESCENDING,
