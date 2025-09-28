@@ -5,27 +5,26 @@
 # ------------------------------------
 
 """
-DESCRIPTION:
-    This sample demonstrates how to use agents with Chainlit UI to analyze taxi trip data 
-    from Microsoft Fabric lakehouse. Features include sample question hints, agent lifecycle 
-    management, and interactive chat interface.
+說明:
+    此範例展示如何使用具有 Chainlit UI 的代理程式來分析 Microsoft Fabric 
+    lakehouse 中的計程車行程數據。功能包括範例問題提示、代理程式生命週期管理
+    和互動式聊天介面。
 
-PREREQUISITES:
-    1) Set up a Microsoft Fabric lakehouse with taxi trip data
-    2) Configure your Azure AI Foundry project with appropriate model deployment
+必要條件:
+    1) 設定包含計程車行程數據的 Microsoft Fabric lakehouse
+    2) 配置具有適當模型部署的 Azure AI Foundry 專案
     
-USAGE:
+使用方法:
     chainlit run chainlit_app.py
  
-    Before running the sample:
+    執行範例前:
  
     pip install -r requirements.txt
 
-    Set these environment variables with your own values:
-    1) PROJECT_ENDPOINT - The project endpoint, as found in the overview page of your
-       Azure AI Foundry project.
-    2) MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in 
-       the "Models + endpoints" tab in your Azure AI Foundry project.
+    使用您自己的值設定這些環境變數:
+    1) PROJECT_ENDPOINT - 專案端點，可在您的 Azure AI Foundry 專案概觀頁面中找到
+    2) MODEL_DEPLOYMENT_NAME - AI 模型的部署名稱，可在您的 Azure AI Foundry 專案
+       「模型 + 端點」分頁的「名稱」欄位下找到
 """
 
 import os
@@ -39,13 +38,13 @@ from azure.ai.projects import AIProjectClient
 from azure.ai.agents.models import ToolSet, FunctionTool
 from azure.identity import DefaultAzureCredential
 
-# Import taxi query functions
+# 匯入計程車查詢函數
 from taxi_query_functions import taxi_query_functions
 
-# Load environment variables
+# 載入環境變數
 load_dotenv()
 
-# Sample questions extracted from sample.txt to define agent personality and provide hints
+# 從 sample.txt 提取的範例問題，用於定義代理程式個性並提供提示
 SAMPLE_QUESTIONS = [
     "Compare the total number of taxi trips on public holidays versus regular weekdays. In addition, analyze whether the average trip distance and average fare amount differ significantly between holidays and weekdays. Provide insights into whether people travel longer distances or pay higher fares during holidays.",
     "Count the number of trips with fare amounts greater than 70. Also, calculate the percentage of these high-fare trips relative to all trips.",
@@ -54,7 +53,7 @@ SAMPLE_QUESTIONS = [
     "Determine the most frequent passenger count value (mode) in the dataset. Provide the distribution of passenger counts across all trips."
 ]
 
-# Global variables for agent and client
+# 代理程式和客戶端的全域變數
 project_client: Optional[AIProjectClient] = None
 current_agent = None
 current_thread = None
@@ -62,10 +61,10 @@ current_thread = None
 
 @cl.on_chat_start
 async def on_chat_start():
-    """Initialize the chat session with agent and thread creation."""
+    """初始化聊天會話，建立代理程式和線程。"""
     global project_client, current_agent, current_thread
     
-    # Check required environment variables
+    # 檢查必要的環境變數
     required_vars = ["PROJECT_ENDPOINT", "MODEL_DEPLOYMENT_NAME"]
     missing_vars = [var for var in required_vars if not os.environ.get(var)]
     
@@ -77,38 +76,38 @@ async def on_chat_start():
         return
     
     try:
-        # Create the project client
+        # 建立專案客戶端
         project_client = AIProjectClient(
             credential=DefaultAzureCredential(),
             endpoint=os.environ["PROJECT_ENDPOINT"],
         )
         
-        # Create function tool with taxi query functions
+        # 使用計程車查詢函數建立功能工具
         functions = FunctionTool(functions=taxi_query_functions)
         toolset = ToolSet()
         toolset.add(functions)
         
-        # Enable automatic function calls
+        # 啟用自動函數呼叫
         project_client.agents.enable_auto_function_calls(toolset)
 
-        # Create agent with personality based on sample questions
-        agent_instructions = """You are a professional taxi data analysis assistant specializing in analyzing taxi trip data from Microsoft Fabric lakehouse.
+        # 基於範例問題建立具有個性的代理程式
+        agent_instructions = """您是專業的計程車數據分析助手，專門分析 Microsoft Fabric lakehouse 中的計程車行程數據。
 
-Your expertise includes analyzing:
-- Public holidays vs weekdays trip patterns and fare comparisons
-- High-fare trip analysis (trips > $70) and their percentage distribution  
-- Daytime (7:00-19:00) vs nighttime (19:00-7:00) trip and fare patterns
-- Geographic analysis including top pickup locations and zip codes
-- Passenger count distributions and modal analysis
+您的專業領域包括分析：
+- 國定假日與平日的行程模式和費用比較
+- 高費用行程分析（行程 > $70）及其百分比分佈  
+- 日間（7:00-19:00）與夜間（19:00-7:00）行程和費用模式
+- 地理分析，包括熱門上車地點和郵遞區號
+- 乘客數量分佈和模態分析
 
-You should:
-1. Provide clear, structured responses with specific numbers and statistics
-2. Use appropriate functions to retrieve real data from the lakehouse
-3. Offer insights and trends based on the data analysis
-4. Present information in Traditional Chinese while preserving technical terms and field names in English
-5. Always maintain a professional and helpful tone
+您應該：
+1. 提供清晰、結構化的回應，包含具體數字和統計資料
+2. 使用適當的函數從 lakehouse 檢索真實數據
+3. 基於數據分析提供洞察和趨勢
+4. 以繁體中文呈現資訊，同時保留技術術語和欄位名稱的英文
+5. 始終保持專業和樂於助人的語調
 
-When users ask about taxi trip data, provide comprehensive analysis including relevant statistics, trends, and actionable insights."""
+當使用者詢問計程車行程數據時，提供包含相關統計、趨勢和可行洞察的全面分析。"""
 
         current_agent = project_client.agents.create_agent(
             model=os.environ["MODEL_DEPLOYMENT_NAME"],
@@ -117,15 +116,15 @@ When users ask about taxi trip data, provide comprehensive analysis including re
             toolset=toolset,
         )
         
-        # Create thread for conversation
+        # 建立對話線程
         current_thread = project_client.agents.threads.create()
         
-        # Store agent info in user session
+        # 在使用者會話中儲存代理程式資訊
         cl.user_session.set("agent_id", current_agent.id)
         cl.user_session.set("thread_id", current_thread.id)
         cl.user_session.set("project_client", project_client)
         
-        # Welcome message with agent ID and sample questions  
+        # 包含代理程式 ID 和範例問題的歡迎訊息  
         welcome_msg = "🚕 **計程車數據分析助手已啟動**\n\n"
         welcome_msg += f"**🤖 Agent ID:** `{current_agent.id}`\n"
         welcome_msg += f"**🧵 Thread ID:** `{current_thread.id}`\n\n"
@@ -134,10 +133,10 @@ When users ask about taxi trip data, provide comprehensive analysis including re
         
         await cl.Message(content=welcome_msg).send()
         
-        # Create hint buttons for sample questions
+        # 為範例問題建立提示按鈕
         actions = []
         for i, question in enumerate(SAMPLE_QUESTIONS, 1):
-            # Create cleaner button text
+            # 建立更清潔的按鈕文字
             button_text = f"Q{i}: {question[:45]}..."
             actions.append(
                 cl.Action(
@@ -154,7 +153,7 @@ When users ask about taxi trip data, provide comprehensive analysis including re
             actions=actions
         ).send()
         
-        # Add agent status message
+        # 新增代理程式狀態訊息
         status_msg = "**ℹ️ 系統狀態:**\n"
         status_msg += "- Agent 已成功建立並配置完成\n"
         status_msg += "- 對話線程已準備就緒\n"
@@ -174,36 +173,36 @@ When users ask about taxi trip data, provide comprehensive analysis including re
 
 @cl.action_callback("sample_q1")
 async def on_sample_q1(action):
-    """Handle sample question 1."""
+    """處理範例問題 1。"""
     await process_query(action.payload.get("question", SAMPLE_QUESTIONS[0]))
 
 
 @cl.action_callback("sample_q2") 
 async def on_sample_q2(action):
-    """Handle sample question 2."""
+    """處理範例問題 2。"""
     await process_query(action.payload.get("question", SAMPLE_QUESTIONS[1]))
 
 
 @cl.action_callback("sample_q3")
 async def on_sample_q3(action):
-    """Handle sample question 3."""
+    """處理範例問題 3。"""
     await process_query(action.payload.get("question", SAMPLE_QUESTIONS[2]))
 
 
 @cl.action_callback("sample_q4")
 async def on_sample_q4(action):
-    """Handle sample question 4."""
+    """處理範例問題 4。"""
     await process_query(action.payload.get("question", SAMPLE_QUESTIONS[3]))
 
 
 @cl.action_callback("sample_q5")
 async def on_sample_q5(action):
-    """Handle sample question 5."""
+    """處理範例問題 5。"""
     await process_query(action.payload.get("question", SAMPLE_QUESTIONS[4]))
 
 
 async def process_query(query_content: str):
-    """Process a user query through the agent."""
+    """透過代理程式處理使用者查詢。"""
     try:
         project_client = cl.user_session.get("project_client")
         agent_id = cl.user_session.get("agent_id")
@@ -213,32 +212,32 @@ async def process_query(query_content: str):
             await cl.Message(content="❌ 會話未正確初始化，請重新載入頁面").send()
             return
         
-        # Show user query
+        # 顯示使用者查詢
         await cl.Message(content=f"**您的查詢:** {query_content}", author="User").send()
         
-        # Show processing message
+        # 顯示處理訊息
         processing_msg = await cl.Message(content="🔄 正在處理查詢...").send()
         
-        # Create message in thread
+        # 在線程中建立訊息
         project_client.agents.messages.create(
             thread_id=thread_id,
             role="user",
             content=query_content
         )
         
-        # Process with retry mechanism
+        # 使用重試機制處理
         max_retries = 3
         run = None
         
         for attempt in range(max_retries):
             try:
-                # Create and process the run
+                # 建立並處理執行
                 run = project_client.agents.runs.create_and_process(
                     thread_id=thread_id,
                     agent_id=agent_id
                 )
                 
-                # Wait for completion
+                # 等待完成
                 while run.status in ["queued", "in_progress"]:
                     await asyncio.sleep(1)
                     run = project_client.agents.runs.get(thread_id=thread_id, run_id=run.id)
@@ -262,16 +261,16 @@ async def process_query(query_content: str):
                     processing_msg.content = error_msg
                     await processing_msg.update()
                     return
-                await asyncio.sleep(2)  # Wait before retry
+                await asyncio.sleep(2)  # 重試前等待
         
         if run and run.status == "completed":
-            # Get the latest assistant message
+            # 取得最新的助手訊息
             messages = project_client.agents.messages.list(thread_id=thread_id)
             message_list = list(messages)
             
             for message in message_list:
                 if message.role == "assistant":
-                    # Update processing message with result
+                    # 使用結果更新處理訊息
                     processing_msg.content = f"**助手回覆:**\n\n{message.content}"
                     await processing_msg.update()
                     break
@@ -285,13 +284,13 @@ async def process_query(query_content: str):
 
 @cl.on_message
 async def on_message(message: cl.Message):
-    """Handle incoming user messages."""
+    """處理傳入的使用者訊息。"""
     await process_query(message.content)
 
 
 @cl.on_chat_end
 async def on_chat_end():
-    """Clean up resources when chat session ends."""
+    """聊天會話結束時清理資源。"""
     try:
         project_client = cl.user_session.get("project_client")
         agent_id = cl.user_session.get("agent_id")
@@ -304,5 +303,5 @@ async def on_chat_end():
 
 
 if __name__ == "__main__":
-    # For local development - use `chainlit run chainlit_app.py` instead
+    # 本地開發用 - 請改用 `chainlit run chainlit_app.py`
     pass
