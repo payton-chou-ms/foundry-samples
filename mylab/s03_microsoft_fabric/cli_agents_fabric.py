@@ -47,11 +47,11 @@ from taxi_query_functions import taxi_query_functions
 # <sample_questions>
 # 從 sample.txt 提取的範例問題，用於定義代理程式個性和能力
 SAMPLE_QUESTIONS = [
-    "Compare the total number of taxi trips on public holidays versus regular weekdays. In addition, analyze whether the average trip distance and average fare amount differ significantly between holidays and weekdays. Provide insights into whether people travel longer distances or pay higher fares during holidays.",
-    "Count the number of trips with fare amounts greater than 70. Also, calculate the percentage of these high-fare trips relative to all trips.", 
-    "Compare the number of trips and average fare amount between daytime (7:00–19:00) and nighttime (19:00–7:00). Additionally, show whether trip distances differ between daytime and nighttime trips.",
-    "Identify the pickup zip code with the highest number of trips. Provide the top 5 pickup zip codes ranked by trip volume.",
-    "Determine the most frequent passenger count value (mode) in the dataset. Provide the distribution of passenger counts across all trips."
+    "比較國定假日與一般平日的計程車總行程數。此外，分析假日與平日之間的平均行程距離和平均車資是否有顯著差異。提供關於人們在假日是否行駛更長距離或支付更高車資的洞察。",
+    "計算車資金額大於 70 的行程數量。同時，計算這些高車資行程相對於所有行程的百分比。",
+    "比較日間（7:00–19:00）與夜間（19:00–7:00）的行程數量和平均車資金額。此外，顯示日間和夜間行程的行程距離是否有差異。",
+    "識別擁有最高行程數的上車郵遞區號。提供按行程量排名的前 5 個上車郵遞區號。",
+    "確定資料集中最常見的乘客數量值（眾數）。提供所有行程中乘客數量的分佈。"
 ]
 # </sample_questions>
 
