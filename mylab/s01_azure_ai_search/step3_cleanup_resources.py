@@ -3,28 +3,28 @@
 # Licensed under the MIT License.
 # ------------------------------------
 """
-FILE: step3_cleanup_resources.py
+檔案: step3_cleanup_resources.py
 
-DESCRIPTION:
-    This script demonstrates how to clean up Azure AI Search index and Azure AI Foundry agent resources.
-    It safely removes all resources created in steps 1 and 2, with proper verification and confirmation.
+說明:
+    此腳本示範如何清理 Azure AI Search 索引和 Azure AI Foundry Agent 資源。
+    它會安全地移除在步驟 1 和步驟 2 中建立的所有資源，並提供適當的驗證和確認。
 
-USAGE:
+使用方式:
     python step3_cleanup_resources.py
 
-    Before running the script:
-    1. Run step1_create_search_index.py and step2_create_ai_agent.py first
-    2. pip install azure-ai-projects azure-identity python-dotenv azure-search-documents
-    3. Create a .env file with the same environment variables as previous steps
-    4. Optionally, provide agent ID and other resource IDs as command line arguments
+    執行腳本前請先：
+    1. 先執行 step1_create_search_index.py 和 step2_create_ai_agent.py
+    2. 執行 pip install azure-ai-projects azure-identity python-dotenv azure-search-documents
+    3. 建立包含與前續步驟相同環境變數的 .env 檔案
+    4. 可選擇性地提供 Agent ID 和其他資源 ID 作為命令行參數
 
-STEPS PERFORMED:
-    1. Initialize environment and credentials
-    2. List and identify resources to clean up
-    3. Clean up AI agents and related resources
-    4. Clean up search index and documents
-    5. Verify cleanup completion
-    6. Provide cleanup summary
+執行步驟:
+    1. 初始化環境和認證
+    2. 列出並識別需要清理的資源
+    3. 清理 AI Agent 和相關資源
+    4. 清理搜索索引和文件
+    5. 驗證清理完成狀態
+    6. 提供清理摘要
 """
 
 import os

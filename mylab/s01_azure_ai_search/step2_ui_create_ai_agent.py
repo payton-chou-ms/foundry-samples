@@ -3,34 +3,34 @@
 # Licensed under the MIT License.
 # ------------------------------------
 """
-FILE: step2_create_ai_agent.py
+檔案: step2_create_ai_agent.py
 
-DESCRIPTION:
-    This script demonstrates how to create an Azure AI Foundry agent with Chainlit UI integration.
-    It creates a hotel search assistant with interactive UI components and agent lifecycle management.
+說明:
+    此腳本展示如何建立具有 Chainlit UI 整合的 Azure AI Foundry 代理程式。
+    它會建立具有互動式 UI 元件和代理程式生命週期管理的酒店搜索助理。
 
-USAGE:
-    For Chainlit UI:
+使用方式:
+    Chainlit UI 模式:
         chainlit run step2_create_ai_agent.py -w
     
-    For command line testing:
+    命令行測試模式:
         python step2_create_ai_agent.py
 
-    Before running the script:
-    1. Run step1_create_search_index.py first to create the search index
+    執行腳本前:
+    1. 先執行 step1_create_search_index.py 來建立搜索索引
     2. pip install -r requirements.txt
-    3. Create a .env file with the following variables:
-       - PROJECT_ENDPOINT (Azure AI Project endpoint)
-       - MODEL_DEPLOYMENT_NAME (AI model deployment name)
+    3. 建立包含以下變數的 .env 檔案:
+       - PROJECT_ENDPOINT (Azure AI Project 端點)
+       - MODEL_DEPLOYMENT_NAME (AI 模型部署名稱)
        - AZURE_SEARCH_ENDPOINT
        - AZURE_SEARCH_API_KEY
-       - AZURE_SEARCH_INDEX (optional, defaults to "vector-search-quickstart")
+       - AZURE_SEARCH_INDEX (可選，預設為 "vector-search-quickstart")
 
-FEATURES:
-    1. Interactive Chainlit UI with sample question buttons
-    2. Agent lifecycle management (creation, display ID, cleanup)
-    3. Hotel search assistant with specialized personality
-    4. Azure AI Search integration for hotel information retrieval
+功能特色:
+    1. 具有範例問題按鈕的互動式 Chainlit UI
+    2. 代理程式生命週期管理 (建立、顯示 ID、清理)
+    3. 具有專業特性的酒店搜索助理
+    4. 用於酒店資訊檢索的 Azure AI Search 整合
 """
 
 import os

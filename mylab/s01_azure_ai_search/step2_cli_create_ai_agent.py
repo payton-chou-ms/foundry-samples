@@ -3,32 +3,32 @@
 # Licensed under the MIT License.
 # ------------------------------------
 """
-FILE: step2_create_ai_agent.py
+檔案: step2_create_ai_agent.py
 
-DESCRIPTION:
-    This script demonstrates how to generate an Azure AI Foundry agent and integrate it with Azure AI Search.
-    It creates an AI agent with search tools, enables conversation functionality, and tests agent responses.
+說明:
+    此腳本展示如何建立 Azure AI Foundry 代理程式並將其與 Azure AI Search 整合。
+    它會建立具有搜索工具的 AI 代理程式，啟用對話功能，並測試代理程式回應。
 
-USAGE:
+使用方式:
     python step2_create_ai_agent.py
 
-    Before running the script:
-    1. Run step1_create_search_index.py first to create the search index
+    執行腳本前:
+    1. 先執行 step1_create_search_index.py 來建立搜索索引
     2. pip install azure-ai-projects azure-identity python-dotenv azure-search-documents
-    3. Create a .env file with the following variables:
-       - PROJECT_ENDPOINT (Azure AI Project endpoint)
-       - MODEL_DEPLOYMENT_NAME (AI model deployment name)
+    3. 建立包含以下變數的 .env 檔案:
+       - PROJECT_ENDPOINT (Azure AI Project 端點)
+       - MODEL_DEPLOYMENT_NAME (AI 模型部署名稱)
        - AZURE_SEARCH_ENDPOINT
        - AZURE_SEARCH_API_KEY
-       - AZURE_SEARCH_INDEX (optional, defaults to "vector-search-quickstart")
+       - AZURE_SEARCH_INDEX (可選，預設為 "vector-search-quickstart")
 
-STEPS PERFORMED:
-    1. Initialize Azure AI Project client and credentials
-    2. Verify search index availability
-    3. Create AI agent with search tool integration
-    4. Test agent conversation capabilities
-    5. Validate agent usage of Azure AI Search
-    6. Demonstrate agent vs. non-agent responses
+執行步驟:
+    1. 初始化 Azure AI Project 客戶端和認證
+    2. 驗證搜索索引可用性
+    3. 建立具有搜索工具整合的 AI 代理程式
+    4. 測試代理程式對話功能
+    5. 驗證代理程式使用 Azure AI Search 的能力
+    6. 展示有/無代理程式的回應差異
 """
 
 import os

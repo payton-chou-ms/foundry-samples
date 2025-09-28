@@ -3,28 +3,28 @@
 # Licensed under the MIT License.
 # ------------------------------------
 """
-FILE: step1_create_search_index.py
+檔案: step1_create_search_index.py
 
-DESCRIPTION:
-    This script demonstrates how to generate an Azure AI Search index and related features.
-    It creates a vector search index, prepares document data, uploads documents, and tests basic search functionality.
+說明:
+    此腳本展示如何建立 Azure AI Search 索引和相關功能。
+    它會建立向量搜索索引、準備文檔數據、上傳文檔並測試基本的搜索功能。
 
-USAGE:
+使用方式:
     python step1_create_search_index.py
 
-    Before running the script:
+    執行腳本前:
     1. pip install azure-search-documents azure-identity python-dotenv
-    2. Create a .env file with the following variables:
+    2. 建立包含以下變數的 .env 檔案:
        - AZURE_SEARCH_ENDPOINT
-       - AZURE_SEARCH_API_KEY (or AZURE_SEARCH_INDEX)
-       - AZURE_SEARCH_INDEX (optional, defaults to "vector-search-quickstart")
+       - AZURE_SEARCH_API_KEY (或 AZURE_SEARCH_INDEX)
+       - AZURE_SEARCH_INDEX (可選，預設為 "vector-search-quickstart")
 
-STEPS PERFORMED:
-    1. Initialize Azure Search client and credentials
-    2. Create search index with vector search configuration
-    3. Prepare hotel document data with embeddings
-    4. Upload documents to the index
-    5. Test basic search functionality (vector, hybrid, semantic)
+執行步驟:
+    1. 初始化 Azure Search 客戶端和認證
+    2. 建立具有向量搜索設定的搜索索引
+    3. 準備包含嵌入向量的酒店文檔數據
+    4. 上傳文檔到索引
+    5. 測試基本搜索功能（向量、混合、語意搜索）
 """
 
 import os
