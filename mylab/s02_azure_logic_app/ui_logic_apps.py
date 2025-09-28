@@ -5,32 +5,32 @@
 # ------------------------------------
 
 """
-DESCRIPTION:
-    This sample demonstrates how to use agents with Chainlit UI to execute Logic Apps workflows
-    including sending emails and other automated tasks. Features include sample action buttons,
-    agent lifecycle management, and interactive chat interface.
+說明:
+    此範例展示如何使用代理程式搭配 Chainlit UI 來執行 Logic Apps 工作流程，
+    包括發送電子郵件和其他自動化任務。功能包括範例動作按鈕、
+    代理程式生命週期管理和互動式聊天介面。
 
-PREREQUISITES:
-    1) Create a Logic App within the same resource group as your Azure AI Project in Azure Portal
-    2) Configure your Logic App to send emails with HTTP request trigger accepting JSON with 
-       'to', 'subject', and 'body' parameters
-    3) Set up your Azure AI Foundry project with appropriate model deployment
+前置條件:
+    1) 在 Azure 入口網站中，於與您的 Azure AI 專案相同的資源群組內建立 Logic App
+    2) 設定您的 Logic App 來發送電子郵件，需要 HTTP 要求觸發器接受包含
+       'to'、'subject' 和 'body' 參數的 JSON
+    3) 使用適當的模型部署設定您的 Azure AI Foundry 專案
     
-USAGE:
+使用方式:
     chainlit run ui_logic_apps.py
  
-    Before running the sample:
+    執行範例前:
  
     pip install azure-ai-projects azure-identity python-dotenv chainlit
 
-    Set these environment variables with your own values:
-    1) PROJECT_ENDPOINT - The project endpoint from your Azure AI Foundry project
-    2) MODEL_DEPLOYMENT_NAME - The deployment name of the AI model
-    3) AZURE_SUBSCRIPTION_ID - Your Azure subscription ID
-    4) AZURE_RESOURCE_GROUP - Your Azure resource group name
-    5) LOGIC_APP_NAME - The name of your Logic App
-    6) TRIGGER_NAME - The name of the trigger in your Logic App
-    7) RECIPIENT_EMAIL - Default recipient email address
+    請使用您自己的值設定以下環境變數:
+    1) PROJECT_ENDPOINT - 來自您的 Azure AI Foundry 專案的專案端點
+    2) MODEL_DEPLOYMENT_NAME - AI 模型的部署名稱
+    3) AZURE_SUBSCRIPTION_ID - 您的 Azure 訂用帳戶 ID
+    4) AZURE_RESOURCE_GROUP - 您的 Azure 資源群組名稱
+    5) LOGIC_APP_NAME - 您的 Logic App 名稱
+    6) TRIGGER_NAME - Logic App 中觸發器的名稱
+    7) RECIPIENT_EMAIL - 預設收件人電子郵件地址
 """
 
 import os
@@ -45,13 +45,16 @@ from azure.ai.agents.models import ToolSet, FunctionTool
 from azure.identity import DefaultAzureCredential
 
 # Import user functions and Logic App utilities
+# 匯入用戶函數和 Logic App 工具
 from user_functions import fetch_current_datetime, fetch_weather, send_email, calculate_sum
 from user_logic_apps import AzureLogicAppTool, create_send_email_function
 
 # Load environment variables
+# 載入環境變數
 load_dotenv()
 
 # Sample actions/tasks for Logic Apps
+# Logic Apps 的範例動作/任務
 SAMPLE_ACTIONS = [
     "Send an email with current date and time to the recipient",
     "Send a weather update email for New York to the recipient", 
@@ -61,6 +64,7 @@ SAMPLE_ACTIONS = [
 ]
 
 # Global variables for agent and client
+# agent 和 client 的全域變數
 project_client: Optional[AIProjectClient] = None
 current_agent = None
 current_thread = None
@@ -69,10 +73,10 @@ logic_app_tool = None
 
 @cl.on_chat_start
 async def on_chat_start():
-    """Initialize the chat session with Logic Apps agent and thread creation."""
+    """初始化聊天會話，建立 Logic Apps agent 和執行緒。"""
     global project_client, current_agent, current_thread, logic_app_tool
     
-    # Check required environment variables
+    # 檢查必要的環境變數
     required_vars = [
         "PROJECT_ENDPOINT", 
         "MODEL_DEPLOYMENT_NAME",
@@ -92,13 +96,13 @@ async def on_chat_start():
         return
     
     try:
-        # Create the project client
+        # 建立專案用戶端
         project_client = AIProjectClient(
             credential=DefaultAzureCredential(),
             endpoint=os.environ["PROJECT_ENDPOINT"],
         )
         
-        # Initialize Logic App tool
+        # 初始化 Logic App 工具
         subscription_id = os.environ["AZURE_SUBSCRIPTION_ID"]
         resource_group = os.environ["AZURE_RESOURCE_GROUP"]
         logic_app_name = os.environ["LOGIC_APP_NAME"]
@@ -106,48 +110,48 @@ async def on_chat_start():
         
         await cl.Message(content="🔧 正在初始化 Logic App 連線...").send()
         
-        # Create and register Logic App tool
+        # 建立並註冊 Logic App 工具
         logic_app_tool = AzureLogicAppTool(subscription_id, resource_group)
         logic_app_tool.register_logic_app(logic_app_name, trigger_name)
         
-        # Create specialized email function
+        # 建立專用的郵件函數
         send_email_func = create_send_email_function(logic_app_tool, logic_app_name)
         
-        # Prepare function tools for the agent
+        # 為 agent 準備函數工具
         functions_to_use: Set = {
             fetch_current_datetime,
             fetch_weather,
-            send_email_func,  # Logic App email function
+            send_email_func,  # Logic App 郵件函數
             calculate_sum,
         }
         
-        # Create function tool and toolset
+        # 建立函數工具和工具集
         functions = FunctionTool(functions=functions_to_use)
         toolset = ToolSet()
         toolset.add(functions)
         
-        # Enable automatic function calls
+        # 啟用自動函數調用
         project_client.agents.enable_auto_function_calls(toolset)
 
-        # Create agent with Logic Apps capabilities
-        agent_instructions = """You are a professional Logic Apps automation assistant specialized in executing workflows through Azure Logic Apps.
+        # 建立具有 Logic Apps 功能的 agent
+        agent_instructions = """您是一位專業的 Logic Apps 自動化助手，專精於透過 Azure Logic Apps 執行工作流程。
 
-Your expertise includes:
-- Sending automated emails through Logic Apps workflows
-- Retrieving current date/time information 
-- Getting weather information for locations
-- Performing calculations and computations
-- Integrating multiple functions to create comprehensive workflows
+您的專業領域包括:
+- 透過 Logic Apps 工作流程傳送自動化電子郵件
+- 擷取目前日期/時間資訊 
+- 取得地點的天氣資訊
+- 執行計算和運算
+- 整合多個函數以建立全面的工作流程
 
-You should:
-1. Use Logic Apps workflows to send emails when requested
-2. Provide clear, structured responses about task execution
-3. Use appropriate functions to retrieve real-time data
-4. Present information in Traditional Chinese while preserving technical terms in English
-5. Always maintain a professional and helpful tone
-6. Confirm successful completion of Logic Apps workflows
+您應該:
+1. 當被要求時，使用 Logic Apps 工作流程來傳送電子郵件
+2. 針對任務執行提供清晰、結構化的回應
+3. 使用適當的函數來擷取即時資料
+4. 以繁體中文呈現資訊，但保留英文的技術術語
+5. 始終保持專業且樂於助人的語調
+6. 確認 Logic Apps 工作流程的成功完成
 
-When users request email sending or automated tasks, execute them through the Logic Apps integration and provide confirmation of the results."""
+當用戶要求發送電子郵件或自動化任務時，透過 Logic Apps 整合執行它們，並提供結果確認。"""
 
         current_agent = project_client.agents.create_agent(
             model=os.environ["MODEL_DEPLOYMENT_NAME"],
@@ -156,17 +160,17 @@ When users request email sending or automated tasks, execute them through the Lo
             toolset=toolset,
         )
         
-        # Create thread for conversation
+        # 建立對話執行緒
         current_thread = project_client.agents.threads.create()
         
-        # Store session info
+        # 儲存會話資訊
         cl.user_session.set("agent_id", current_agent.id)
         cl.user_session.set("thread_id", current_thread.id)
         cl.user_session.set("project_client", project_client)
         cl.user_session.set("logic_app_name", logic_app_name)
         cl.user_session.set("recipient_email", os.environ["RECIPIENT_EMAIL"])
         
-        # Welcome message
+        # 歡迎訊息
         welcome_msg = "⚡ **Logic Apps 自動化助手已啟動**\n\n"
         welcome_msg += f"**🤖 Agent ID:** `{current_agent.id}`\n"
         welcome_msg += f"**🧵 Thread ID:** `{current_thread.id}`\n"
@@ -177,7 +181,7 @@ When users request email sending or automated tasks, execute them through the Lo
         
         await cl.Message(content=welcome_msg).send()
         
-        # Create action buttons for sample tasks
+        # 為範例任務建立動作按鈕
         actions = []
         for i, action in enumerate(SAMPLE_ACTIONS, 1):
             button_text = f"任務{i}: {action[:40]}..."
@@ -196,7 +200,7 @@ When users request email sending or automated tasks, execute them through the Lo
             actions=actions
         ).send()
         
-        # Add status message
+        # 新增狀態訊息
         status_msg = "**ℹ️ 系統狀態:**\n"
         status_msg += "- Logic Apps Agent 已成功建立並配置完成\n"
         status_msg += "- Logic App 連線已建立並註冊完成\n"
@@ -220,9 +224,10 @@ When users request email sending or automated tasks, execute them through the Lo
 
 
 # Action callbacks for sample tasks
+# 範例任務的動作回呼函數
 @cl.action_callback("action_1")
 async def on_action_1(action):
-    """Handle sample action 1."""
+    """處理範例動作 1。"""
     recipient = cl.user_session.get("recipient_email")
     task = f"{action.payload.get('action', SAMPLE_ACTIONS[0])} 收件人: {recipient}"
     await process_logic_app_task(task)
@@ -230,7 +235,7 @@ async def on_action_1(action):
 
 @cl.action_callback("action_2") 
 async def on_action_2(action):
-    """Handle sample action 2."""
+    """處理範例動作 2。"""
     recipient = cl.user_session.get("recipient_email")
     task = f"{action.payload.get('action', SAMPLE_ACTIONS[1])} 收件人: {recipient}"
     await process_logic_app_task(task)
@@ -238,7 +243,7 @@ async def on_action_2(action):
 
 @cl.action_callback("action_3")
 async def on_action_3(action):
-    """Handle sample action 3."""
+    """處理範例動作 3。"""
     recipient = cl.user_session.get("recipient_email")
     task = f"{action.payload.get('action', SAMPLE_ACTIONS[2])} 收件人: {recipient}"
     await process_logic_app_task(task)
@@ -246,7 +251,7 @@ async def on_action_3(action):
 
 @cl.action_callback("action_4")
 async def on_action_4(action):
-    """Handle sample action 4."""
+    """處理範例動作 4。"""
     recipient = cl.user_session.get("recipient_email")
     task = f"{action.payload.get('action', SAMPLE_ACTIONS[3])} 收件人: {recipient}"
     await process_logic_app_task(task)
@@ -254,14 +259,14 @@ async def on_action_4(action):
 
 @cl.action_callback("action_5")
 async def on_action_5(action):
-    """Handle sample action 5."""
+    """處理範例動作 5。"""
     recipient = cl.user_session.get("recipient_email")
     task = f"{action.payload.get('action', SAMPLE_ACTIONS[4])} 收件人: {recipient}"
     await process_logic_app_task(task)
 
 
 async def process_logic_app_task(task_content: str):
-    """Process a Logic Apps task through the agent."""
+    """透過 agent 處理 Logic Apps 任務。"""
     try:
         project_client = cl.user_session.get("project_client")
         agent_id = cl.user_session.get("agent_id")
@@ -271,33 +276,33 @@ async def process_logic_app_task(task_content: str):
             await cl.Message(content="❌ 會話未正確初始化，請重新載入頁面").send()
             return
         
-        # Show user task
+        # 顯示用戶任務
         await cl.Message(content=f"**您的任務:** {task_content}", author="User").send()
         
-        # Show processing message
+        # 顯示處理中訊息
         processing_msg = await cl.Message(content="⚡ 正在執行 Logic Apps 工作流程...").send()
         
-        # Create message in thread
+        # 在執行緒中建立訊息
         project_client.agents.messages.create(
             thread_id=thread_id,
             role="user",
             content=task_content
         )
         
-        # Process with retry mechanism
+        # 使用重試機制處理
         max_retries = 3
         run = None
         
         for attempt in range(max_retries):
             try:
-                # Create and process the run
+                # 建立並處理執行
                 run = project_client.agents.runs.create_and_process(
                     thread_id=thread_id,
                     agent_id=agent_id
                 )
                 
-                # Wait for completion with timeout
-                timeout = 60  # 60 seconds timeout
+                # 等待完成並設定超時
+                timeout = 60  # 60 秒超時
                 start_time = time.time()
                 
                 while run.status in ["queued", "in_progress"]:
@@ -330,16 +335,16 @@ async def process_logic_app_task(task_content: str):
                     processing_msg.content = error_msg
                     await processing_msg.update()
                     return
-                await asyncio.sleep(2)  # Wait before retry
+                await asyncio.sleep(2)  # 重試前等待
         
         if run and run.status == "completed":
-            # Get the latest assistant message
+            # 取得最新的助手訊息
             messages = project_client.agents.messages.list(thread_id=thread_id)
             message_list = list(messages)
             
             for message in message_list:
                 if message.role == "assistant":
-                    # Update processing message with result
+                    # 以結果更新處理中訊息
                     processing_msg.content = f"**⚡ Logic Apps 執行結果:**\n\n{message.content}"
                     await processing_msg.update()
                     break
@@ -353,24 +358,24 @@ async def process_logic_app_task(task_content: str):
 
 @cl.on_message
 async def on_message(message: cl.Message):
-    """Handle incoming user messages."""
+    """處理傳入的用戶訊息。"""
     await process_logic_app_task(message.content)
 
 
 @cl.on_chat_end
 async def on_chat_end():
-    """Clean up resources when chat session ends."""
+    """聊天會話結束時清理資源。"""
     try:
         project_client = cl.user_session.get("project_client")
         agent_id = cl.user_session.get("agent_id")
         
         if project_client and agent_id:
             project_client.agents.delete_agent(agent_id)
-            print(f"🧹 Cleaned up Logic Apps agent {agent_id}")
+            print(f"🧹 已清理 Logic Apps agent {agent_id}")
     except Exception as e:
-        print(f"⚠️ Error cleaning up resources: {str(e)}")
+        print(f"⚠️ 清理資源時發生錯誤: {str(e)}")
 
 
 if __name__ == "__main__":
-    # For local development - use `chainlit run ui_logic_apps.py` instead
+    # 本地開發用 - 請改用 `chainlit run ui_logic_apps.py`
     pass
