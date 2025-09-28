@@ -3,28 +3,28 @@
 # Licensed under the MIT License.
 # ------------------------------------
 """
-FILE: step3_cleanup_resources.py
+檔案: step3_cleanup_resources.py
 
-DESCRIPTION:
-    This script demonstrates how to clean up Azure AI Search index and Azure AI Foundry agent resources.
-    It safely removes all resources created in steps 1 and 2, with proper verification and confirmation.
+說明:
+    此腳本示範如何清理 Azure AI Search 索引和 Azure AI Foundry Agent 資源。
+    它會安全地移除在步驟 1 和步驟 2 中建立的所有資源，並提供適當的驗證和確認。
 
-USAGE:
+使用方式:
     python step3_cleanup_resources.py
 
-    Before running the script:
-    1. Run step1_create_search_index.py and step2_create_ai_agent.py first
-    2. pip install azure-ai-projects azure-identity python-dotenv azure-search-documents
-    3. Create a .env file with the same environment variables as previous steps
-    4. Optionally, provide agent ID and other resource IDs as command line arguments
+    執行腳本前請先：
+    1. 先執行 step1_create_search_index.py 和 step2_create_ai_agent.py
+    2. 執行 pip install azure-ai-projects azure-identity python-dotenv azure-search-documents
+    3. 建立包含與前續步驟相同環境變數的 .env 檔案
+    4. 可選擇性地提供 Agent ID 和其他資源 ID 作為命令行參數
 
-STEPS PERFORMED:
-    1. Initialize environment and credentials
-    2. List and identify resources to clean up
-    3. Clean up AI agents and related resources
-    4. Clean up search index and documents
-    5. Verify cleanup completion
-    6. Provide cleanup summary
+執行步驟:
+    1. 初始化環境和認證
+    2. 列出並識別需要清理的資源
+    3. 清理 AI Agent 和相關資源
+    4. 清理搜索索引和文件
+    5. 驗證清理完成狀態
+    6. 提供清理摘要
 """
 
 import os
@@ -42,19 +42,19 @@ def initialize_environment():
     """Initialize environment variables and credentials."""
     print("🔧 初始化環境變數和認證 / Initializing environment and credentials...")
     
-    # Load environment variables from .env file
+    # 從 .env 檔案載入環境變數 / Load environment variables from .env file
     load_dotenv(override=True)
     
-    # AI Project settings
+    # AI Project 設定 / AI Project settings
     project_endpoint = os.environ["PROJECT_ENDPOINT"]
     model_deployment_name = os.environ["MODEL_DEPLOYMENT_NAME"]
     
-    # Search settings
+    # 搜索設定 / Search settings
     search_endpoint = os.environ["AZURE_SEARCH_ENDPOINT"]
     search_api_key = os.getenv("AZURE_SEARCH_API_KEY")
     index_name = os.getenv("AZURE_SEARCH_INDEX", "vector-search-quickstart")
     
-    # Initialize credentials
+    # 初始化認證 / Initialize credentials
     project_credential = DefaultAzureCredential(exclude_interactive_browser_credential=False)
     search_credential = AzureKeyCredential(search_api_key)
     
@@ -77,12 +77,12 @@ def list_available_agents(project_client):
     print(f"\n📋 列出可用的 Agent / Listing available agents...")
     
     try:
-        # Note: The agents.list() method may not be available in all SDK versions
-        # This is a conceptual implementation - actual API may differ
+        # 注意：agents.list() 方法可能在所有 SDK 版本中不可用 / Note: The agents.list() method may not be available in all SDK versions
+        # 這是概念實現 - 實際 API 可能不同 / This is a conceptual implementation - actual API may differ
         agents = []
         
-        # For demonstration, we'll look for agents with specific naming patterns
-        # In a real implementation, you might store agent IDs or use different methods
+        # 為演示，我們會查找具有特定命名模式的 agents / For demonstration, we'll look for agents with specific naming patterns
+        # 在實際實現中，您可能會儲存 agent ID 或使用不同的方法 / In a real implementation, you might store agent IDs or use different methods
         
         print(f"⚠️  注意：需要手動提供 Agent ID 進行清理")
         print(f"⚠️  Note: Agent ID needs to be provided manually for cleanup")
@@ -101,7 +101,7 @@ def cleanup_specific_agent(project_client, agent_id):
     print(f"\n🤖 清理 Agent / Cleaning up agent: {agent_id}")
     
     try:
-        # Delete the agent
+        # 刪除 agent / Delete the agent
         project_client.agents.delete_agent(agent_id)
         print(f"✅ Agent 刪除成功 / Agent deleted successfully: {agent_id}")
         return True
@@ -110,7 +110,7 @@ def cleanup_specific_agent(project_client, agent_id):
         error_msg = str(e)
         if "not found" in error_msg.lower() or "404" in error_msg:
             print(f"⚠️  Agent 不存在或已刪除 / Agent not found or already deleted: {agent_id}")
-            return True  # Consider this successful
+            return True  # 將此視為成功 / Consider this successful
         else:
             print(f"❌ Agent 刪除失敗 / Agent deletion failed: {error_msg}")
             return False
@@ -120,7 +120,7 @@ def cleanup_agents_by_pattern(project_client):
     """Clean up agents created by our scripts (by naming pattern)."""
     print(f"\n🔍 搜索並清理腳本創建的 Agent / Searching and cleaning up script-created agents...")
     
-    # List of agent names that our scripts create
+    # 我們腳本建立的 agent 名稱清單 / List of agent names that our scripts create
     known_agent_names = [
         "hotel-search-agent",
         "my-agent",
@@ -132,7 +132,7 @@ def cleanup_agents_by_pattern(project_client):
     
     for agent_name in known_agent_names:
         print(f"🔍 檢查 Agent 名稱 / Checking agent name: {agent_name}")
-        # Note: This is conceptual - actual implementation would depend on available API methods
+        # 注意：這是概念性的 - 實際實現會根據可用的 API 方法而定 / Note: This is conceptual - actual implementation would depend on available API methods
         print(f"⚠️  手動清理建議：如果您創建了名為 '{agent_name}' 的 Agent，請提供其 ID")
         print(f"⚠️  Manual cleanup suggestion: If you created an agent named '{agent_name}', please provide its ID")
     
@@ -179,15 +179,15 @@ def cleanup_index_documents(search_endpoint, search_credential, index_name):
             credential=search_credential
         )
         
-        # Get all documents
+        # 取得所有文檔 / Get all documents
         results = search_client.search(search_text="*", top=1000)
         
         documents_to_delete = []
         for result in results:
-            # Create delete action for each document
+            # 為每個文檔建立刪除動作 / Create delete action for each document
             documents_to_delete.append({
                 "@search.action": "delete",
-                "HotelId": result["HotelId"]  # Using the key field
+                "HotelId": result["HotelId"]  # 使用金鑰欄位 / Using the key field
             })
         
         if documents_to_delete:
@@ -211,7 +211,7 @@ def cleanup_entire_index(search_endpoint, search_credential, index_name):
     try:
         index_client = SearchIndexClient(endpoint=search_endpoint, credential=search_credential)
         
-        # Delete the entire index
+        # 刪除整個索引 / Delete the entire index
         index_client.delete_index(index_name)
         print(f"✅ 索引刪除成功 / Index deleted successfully: {index_name}")
         return True
@@ -220,7 +220,7 @@ def cleanup_entire_index(search_endpoint, search_credential, index_name):
         error_msg = str(e)
         if "not found" in error_msg.lower() or "404" in error_msg:
             print(f"⚠️  索引不存在或已刪除 / Index not found or already deleted: {index_name}")
-            return True  # Consider this successful
+            return True  # 將此視為成功 / Consider this successful
         else:
             print(f"❌ 索引刪除失敗 / Index deletion failed: {error_msg}")
             return False
@@ -236,7 +236,7 @@ def verify_cleanup_completion(config, cleaned_agent_ids):
         "overall_success": True
     }
     
-    # Verify agent cleanup
+    # 驗證 agent 清理 / Verify agent cleanup
     if cleaned_agent_ids:
         project_client = AIProjectClient(
             endpoint=config["project_endpoint"],
@@ -246,7 +246,7 @@ def verify_cleanup_completion(config, cleaned_agent_ids):
         
         for agent_id in cleaned_agent_ids:
             try:
-                # Try to get the agent - should fail if cleaned properly
+                # 嘗試取得 agent - 如果清理正確應該會失敗 / Try to get the agent - should fail if cleaned properly
                 agent = project_client.agents.get_agent(agent_id)
                 print(f"⚠️  Agent 仍然存在 / Agent still exists: {agent_id}")
                 verification_results["overall_success"] = False
@@ -257,7 +257,7 @@ def verify_cleanup_completion(config, cleaned_agent_ids):
                 else:
                     print(f"❓ Agent 狀態未知 / Agent status unknown: {agent_id}")
     
-    # Verify index cleanup
+    # 驗證索引清理 / Verify index cleanup
     if not verify_search_index_exists(
         config["search_endpoint"],
         config["search_credential"], 
@@ -283,7 +283,7 @@ def interactive_cleanup_mode(config):
         "success": True
     }
     
-    # Ask about agent cleanup
+    # 詢問關於 agent 清理 / Ask about agent cleanup
     print(f"\n🤖 Agent 清理 / Agent cleanup:")
     agent_id = input("請輸入要刪除的 Agent ID (留空跳過) / Enter Agent ID to delete (leave empty to skip): ").strip()
     
@@ -299,7 +299,7 @@ def interactive_cleanup_mode(config):
         else:
             cleanup_results["success"] = False
     
-    # Ask about index cleanup
+    # 詢問關於索引清理 / Ask about index cleanup
     print(f"\n🗂️  搜索索引清理 / Search index cleanup:")
     print(f"索引名稱 / Index name: {config['index_name']}")
     
@@ -343,7 +343,7 @@ def main():
     print("🧹 Starting Step 3: Clean up AI Search Index and AI Foundry Agent")
     print("=" * 80)
     
-    # Parse command line arguments
+    # 解析命令行參數 / Parse command line arguments
     parser = argparse.ArgumentParser(description="Clean up Azure AI resources")
     parser.add_argument("--agent-id", help="Specific agent ID to clean up")
     parser.add_argument("--index-only", action="store_true", help="Clean up index only")
@@ -354,10 +354,10 @@ def main():
     args = parser.parse_args()
     
     try:
-        # Step 1: Initialize environment
+        # 步驟 1: 初始化環境 / Step 1: Initialize environment
         config = initialize_environment()
         
-        # Step 2: Interactive mode or automated cleanup
+        # 步驟 2: 互動模式或自動清理 / Step 2: Interactive mode or automated cleanup
         if args.interactive:
             cleanup_results = interactive_cleanup_mode(config)
         else:
@@ -367,14 +367,14 @@ def main():
                 "success": True
             }
             
-            # Initialize project client for agent operations
+            # 為 agent 操作初始化專案客戶端 / Initialize project client for agent operations
             project_client = AIProjectClient(
                 endpoint=config["project_endpoint"],
                 credential=config["project_credential"],
                 api_version="latest",
             )
             
-            # Clean up specific agent if provided
+            # 如有提供，清理指定的 agent / Clean up specific agent if provided
             if args.agent_id and not args.index_only:
                 print(f"\n🎯 清理指定的 Agent / Cleaning up specific agent...")
                 if cleanup_specific_agent(project_client, args.agent_id):
@@ -382,12 +382,12 @@ def main():
                 else:
                     cleanup_results["success"] = False
             
-            # Clean up agents by pattern if no specific ID provided
+            # 如未提供特定 ID，則按模式清理 agents / Clean up agents by pattern if no specific ID provided
             elif not args.index_only and not args.agent_id:
                 print(f"\n🔍 嘗試清理已知的 Agent / Attempting to clean up known agents...")
                 cleanup_agents_by_pattern(project_client)
             
-            # Clean up search index
+            # 清理搜索索引 / Clean up search index
             if not args.agents_only:
                 if verify_search_index_exists(
                     config["search_endpoint"],
@@ -417,11 +417,11 @@ def main():
                         else:
                             cleanup_results["success"] = False
         
-        # Step 3: Verify cleanup completion
+        # 步驟 3: 驗證清理完成 / Step 3: Verify cleanup completion
         if args.agent_id or cleanup_results["agents"]:
             verification_results = verify_cleanup_completion(config, cleanup_results["agents"])
         
-        # Step 4: Provide cleanup summary
+        # 步驟 4: 提供清理摘要 / Step 4: Provide cleanup summary
         print(f"\n📊 清理摘要 / Cleanup Summary")
         print("=" * 40)
         

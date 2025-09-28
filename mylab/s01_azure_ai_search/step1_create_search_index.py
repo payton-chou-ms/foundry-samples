@@ -3,28 +3,28 @@
 # Licensed under the MIT License.
 # ------------------------------------
 """
-FILE: step1_create_search_index.py
+檔案: step1_create_search_index.py
 
-DESCRIPTION:
-    This script demonstrates how to generate an Azure AI Search index and related features.
-    It creates a vector search index, prepares document data, uploads documents, and tests basic search functionality.
+說明:
+    此腳本展示如何建立 Azure AI Search 索引和相關功能。
+    它會建立向量搜索索引、準備文檔數據、上傳文檔並測試基本的搜索功能。
 
-USAGE:
+使用方式:
     python step1_create_search_index.py
 
-    Before running the script:
+    執行腳本前:
     1. pip install azure-search-documents azure-identity python-dotenv
-    2. Create a .env file with the following variables:
+    2. 建立包含以下變數的 .env 檔案:
        - AZURE_SEARCH_ENDPOINT
-       - AZURE_SEARCH_API_KEY (or AZURE_SEARCH_INDEX)
-       - AZURE_SEARCH_INDEX (optional, defaults to "vector-search-quickstart")
+       - AZURE_SEARCH_API_KEY (或 AZURE_SEARCH_INDEX)
+       - AZURE_SEARCH_INDEX (可選，預設為 "vector-search-quickstart")
 
-STEPS PERFORMED:
-    1. Initialize Azure Search client and credentials
-    2. Create search index with vector search configuration
-    3. Prepare hotel document data with embeddings
-    4. Upload documents to the index
-    5. Test basic search functionality (vector, hybrid, semantic)
+執行步驟:
+    1. 初始化 Azure Search 客戶端和認證
+    2. 建立具有向量搜索設定的搜索索引
+    3. 準備包含嵌入向量的酒店文檔數據
+    4. 上傳文檔到索引
+    5. 測試基本搜索功能（向量、混合、語意搜索）
 """
 
 import os
@@ -56,16 +56,16 @@ def initialize_environment():
     """Initialize environment variables and credentials."""
     print("🔧 初始化環境變數和認證 / Initializing environment and credentials...")
     
-    # Load environment variables from .env file
+    # 從 .env 檔案載入環境變數 / Load environment variables from .env file
     load_dotenv(override=True)
     
     api_key = os.getenv("AZURE_SEARCH_API_KEY")
     search_endpoint = os.environ["AZURE_SEARCH_ENDPOINT"]
     index_name = os.getenv("AZURE_SEARCH_INDEX", "vector-search-quickstart")
     
-    # Use API key authentication (can be switched to DefaultAzureCredential if needed)
+    # 使用 API 金鑰認證（可切換至 DefaultAzureCredential 如需要）/ Use API key authentication (can be switched to DefaultAzureCredential if needed)
     credential = AzureKeyCredential(api_key)
-    # credential = DefaultAzureCredential()  # Alternative authentication method
+    # credential = DefaultAzureCredential()  # 替代認證方式 / Alternative authentication method
     
     print(f"✅ Azure Search 端點 / Endpoint: {search_endpoint}")
     print(f"✅ 索引名稱 / Index name: {index_name}")
@@ -78,10 +78,10 @@ def create_search_index(search_endpoint, credential, index_name):
     """Create a search index with vector search configuration."""
     print("\n📋 建立搜索索引 / Creating search index...")
     
-    # Create a search index client
+    # 建立搜索索引客戶端 / Create a search index client
     index_client = SearchIndexClient(endpoint=search_endpoint, credential=credential)
     
-    # Define the index fields
+    # 定義索引欄位 / Define the index fields
     fields = [
         SimpleField(name="HotelId", type=SearchFieldDataType.String, key=True, filterable=True),
         SearchableField(name="HotelName", type=SearchFieldDataType.String, sortable=True),
@@ -108,7 +108,7 @@ def create_search_index(search_endpoint, credential, index_name):
         SimpleField(name="Location", type=SearchFieldDataType.GeographyPoint, filterable=True, sortable=True),
     ]
 
-    # Configure vector search algorithms and profiles
+    # 配置向量搜索演算法和設定檔 / Configure vector search algorithms and profiles
     vector_search = VectorSearch(
         algorithms=[
             HnswAlgorithmConfiguration(name="my-hnsw-vector-config-1", kind="hnsw"),
@@ -119,7 +119,7 @@ def create_search_index(search_endpoint, credential, index_name):
         ]
     )
 
-    # Configure semantic search
+    # 配置語意搜索 / Configure semantic search
     semantic_config = SemanticConfiguration(
         name="my-semantic-config",
         prioritized_fields=SemanticPrioritizedFields(
@@ -131,7 +131,7 @@ def create_search_index(search_endpoint, credential, index_name):
 
     semantic_search = SemanticSearch(configurations=[semantic_config])
 
-    # Create the search index
+    # 建立搜索索引 / Create the search index
     index = SearchIndex(name=index_name, fields=fields, vector_search=vector_search, semantic_search=semantic_search)
     result = index_client.create_or_update_index(index)
     
@@ -143,7 +143,7 @@ def prepare_hotel_documents():
     """Prepare hotel document data with embeddings."""
     print("\n📝 準備酒店文檔數據 / Preparing hotel document data...")
     
-    # Sample hotel documents with pre-computed embeddings
+    # 預先計算嵌入向量的酒店文檔範例 / Sample hotel documents with pre-computed embeddings
     documents = [
     {
         "@search.action": "mergeOrUpload",
@@ -384,10 +384,10 @@ def upload_documents(search_endpoint, credential, index_name, documents):
     """Upload documents to the search index."""
     print(f"\n📤 上傳文檔到索引 / Uploading documents to index '{index_name}'...")
     
-    # Create a search client
+    # 建立搜索客戶端 / Create a search client
     search_client = SearchClient(endpoint=search_endpoint, index_name=index_name, credential=credential)
     
-    # Upload documents
+    # 上傳文檔 / Upload documents
     result = search_client.upload_documents(documents=documents)
     
     upload_success = 0
@@ -406,7 +406,7 @@ def test_basic_search(search_client):
     print(f"\n🔍 測試基本搜索功能 / Testing basic search functionality...")
     
     try:
-        # Test 1: Simple text search
+        # 測試 1: 簡單文字搜索 / Test 1: Simple text search
         print("\n📝 測試 1: 簡單文字搜索 / Test 1: Simple text search")
         results = search_client.search(search_text="boutique hotel", top=3)
         
@@ -420,9 +420,9 @@ def test_basic_search(search_client):
         else:
             print("⚠️  文字搜索沒有結果 / No text search results")
             
-        # Test 2: Vector search (with example vector - shortened for demo)
+        # 測試 2: 向量搜索（使用範例向量 - 為演示而縮短）/ Test 2: Vector search (with example vector - shortened for demo)
         print("\n🔍 測試 2: 向量搜索 / Test 2: Vector search")
-        sample_vector = [-0.048865054,-0.020307425,0.017633565,0.023875887,-0.04401433] + [0.0] * 1531  # Padded to 1536 dimensions
+        sample_vector = [-0.048865054,-0.020307425,0.017633565,0.023875887,-0.04401433] + [0.0] * 1531  # 填充至 1536 維度 / Padded to 1536 dimensions
         
         vector_query = VectorizedQuery(vector=sample_vector, k_nearest_neighbors=3, fields="DescriptionVector")
         results = search_client.search(search_text=None, vector_queries=[vector_query])
@@ -437,7 +437,7 @@ def test_basic_search(search_client):
         else:
             print("⚠️  向量搜索沒有結果 / No vector search results")
             
-        # Test 3: Filter search
+        # 測試 3: 篩選搜索 / Test 3: Filter search
         print("\n🏷️  測試 3: 篩選搜索 / Test 3: Filter search")
         results = search_client.search(search_text="*", filter="Category eq 'Boutique'", top=5)
         
@@ -464,19 +464,19 @@ def main():
     print("=" * 80)
     
     try:
-        # Step 1: Initialize environment
+        # 步驟 1: 初始化環境 / Step 1: Initialize environment
         search_endpoint, credential, index_name = initialize_environment()
         
-        # Step 2: Create search index
+        # 步驟 2: 建立搜索索引 / Step 2: Create search index
         index_client = create_search_index(search_endpoint, credential, index_name)
         
-        # Step 3: Prepare document data
+        # 步驟 3: 準備文檔數據 / Step 3: Prepare document data
         documents = prepare_hotel_documents()
         
-        # Step 4: Upload documents
+        # 步驟 4: 上傳文檔 / Step 4: Upload documents
         search_client = upload_documents(search_endpoint, credential, index_name, documents)
         
-        # Step 5: Test basic search functionality
+        # 步驟 5: 測試基本搜索功能 / Step 5: Test basic search functionality
         test_basic_search(search_client)
         
         print(f"\n🎉 步驟 1 完成！/ Step 1 completed successfully!")
@@ -484,7 +484,7 @@ def main():
         print(f"📝 端點 / Endpoint: {search_endpoint}")
         print(f"📝 已準備好用於 AI Agent 整合 / Ready for AI Agent integration")
         
-        # Return important information for next steps
+        # 回傳重要資訊供下一步使用 / Return important information for next steps
         return {
             "index_name": index_name,
             "search_endpoint": search_endpoint,
