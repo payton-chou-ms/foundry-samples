@@ -50,9 +50,10 @@ mylab/s04_azure_databricks/
 
 ### 系統需求
 - Python 3.12 或更新版本
-- [Azure 訂閱帳戶][azure_sub]
+- [Azure 訂閱帳戶]
 - [Azure AI Foundry 專案](https://learn.microsoft.com/azure/ai-studio/how-to/create-projects)
 - Azure CLI 已安裝並登入
+  - az login --tenant <YOUR_TENANT_ID> --use-device-code
 
 ### 權限需求
 - 適當的角色指派，請參閱 [Azure AI Foundry 入口網站中的角色型存取控制](https://learn.microsoft.com/azure/ai-foundry/concepts/rbac-ai-foundry)
