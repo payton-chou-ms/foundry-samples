@@ -36,7 +36,7 @@ from typing import Any, Callable, Set
 from dotenv import load_dotenv
 import chainlit as cl
 
-# Load environment variables from .env file
+# 從 .env 檔案載入環境變數
 load_dotenv()
 
 os.environ["DATABRICKS_SDK_UPSTREAM"] = "AzureAIFoundry"
@@ -44,7 +44,7 @@ os.environ["DATABRICKS_SDK_UPSTREAM_VERSION"] = "1.0.0"
 
 DATABRICKS_ENTRA_ID_AUDIENCE_SCOPE = "2ff814a6-3304-4ab8-85cb-cd0e6f879c1d/.default" 
 
-# Get configuration from environment variables
+# 從環境變數取得設定
 FOUNDRY_PROJECT_ENDPOINT = os.getenv("FOUNDRY_PROJECT_ENDPOINT")
 FOUNDRY_DATABRICKS_CONNECTION_NAME = os.getenv("FOUNDRY_DATABRICKS_CONNECTION_NAME")
 MODEL_DEPLOYMENT_NAME = os.getenv("MODEL_DEPLOYMENT_NAME", "gpt-4o")
@@ -54,7 +54,7 @@ if not FOUNDRY_PROJECT_ENDPOINT:
 if not FOUNDRY_DATABRICKS_CONNECTION_NAME:
     raise ValueError("FOUNDRY_DATABRICKS_CONNECTION_NAME environment variable is required")
 
-# Instructions from sample.txt
+# sample.txt 中的指令
 AGENT_INSTRUCTIONS = """
 You are a data analysis agent connected to the Databricks "samples.nyctaxi.trips" dataset. 
 Your role is to help users explore and analyze taxi trip data. 
@@ -70,7 +70,7 @@ You can answer the following types of questions:
 Always explain your answer clearly, and when relevant, show both the query and a short natural-language summary of the results.
 """
 
-# Sample questions from sample.txt
+# sample.txt 中的範例問題
 SAMPLE_QUESTIONS = [
     "What is the average fare amount per trip? (平均車資)",
     "How does the number of trips vary by hour of the day or day of the week? (依時間的趨勢)",
@@ -80,7 +80,7 @@ SAMPLE_QUESTIONS = [
 ]
 
 ##################
-# Global variables for agent components
+# agent 元件的全域變數
 credential = None
 project_client = None
 genie_api = None
@@ -89,12 +89,12 @@ databricks_workspace_client = None
 
 def ask_genie(question: str, conversation_id: str = None) -> str:
     """
-    Ask Genie a question and return the response as JSON.
-    The response JSON will contain the conversation ID and either the message content or a table of results.
-    Reuse the conversation ID in future calls to continue the conversation and maintain context.
+    向 Genie 提問並以 JSON 格式回傳回應。
+    回應 JSON 將包含對話 ID 以及訊息內容或結果表格。
+    在後續呼叫中重複使用對話 ID 以繼續對話並保持上下文。
     
-    param question: The question to ask Genie.
-    param conversation_id: The ID of the conversation to continue. If None, a new conversation will be started.
+    param question: 要向 Genie 提出的問題。
+    param conversation_id: 要繼續的對話 ID。若為 None，將開始新對話。
     """
     try:
         if conversation_id is None:
@@ -111,7 +111,7 @@ def ask_genie(question: str, conversation_id: str = None) -> str:
 
         message_content = genie_api.get_message(genie_space_id, message.conversation_id, message.id)
 
-        # Try to parse structured data if available
+        # 嘗試解析結構化資料（如果有的話）
         if query_result and query_result.statement_response:
             statement_id = query_result.statement_response.statement_id
             results = databricks_workspace_client.statement_execution.get_statement(statement_id)
@@ -140,7 +140,7 @@ def ask_genie(question: str, conversation_id: str = None) -> str:
                 }
             })
 
-        # Fallback to plain message text
+        # 回退到純文字訊息
         if message_content.attachments:
             for attachment in message_content.attachments:
                 if attachment.text and attachment.text.content:
@@ -162,11 +162,11 @@ def ask_genie(question: str, conversation_id: str = None) -> str:
 
 @cl.on_chat_start
 async def start():
-    """Initialize the agent and UI components when chat starts."""
+    """聊天開始時初始化 agent 和 UI 元件。"""
     global credential, project_client, genie_api, genie_space_id, databricks_workspace_client
     
     try:
-        # Initialize Azure credentials and clients
+        # 初始化 Azure 憑證和客戶端
         credential = DefaultAzureCredential(exclude_interactive_browser_credential=False)
         
         project_client = AIProjectClient(
@@ -188,13 +188,13 @@ async def start():
 
         genie_api = GenieAPI(databricks_workspace_client.api_client)
 
-        # Create toolset
+        # 建立工具組
         toolset = ToolSet()
         user_functions: Set[Callable[..., Any]] = {ask_genie}
         functions = FunctionTool(functions=user_functions)
         toolset.add(functions)
 
-        # Create agent
+        # 建立 agent
         project_client.agents.enable_auto_function_calls(toolset)
         agent = project_client.agents.create_agent(
             model=MODEL_DEPLOYMENT_NAME,
@@ -203,16 +203,16 @@ async def start():
             toolset=toolset,
         )
 
-        # Create thread
+        # 建立執行緒
         thread = project_client.agents.threads.create()
 
-        # Store in session
+        # 儲存至會話
         cl.user_session.set("agent", agent)
         cl.user_session.set("thread", thread)
         cl.user_session.set("project_client", project_client)
         cl.user_session.set("conversation_id", None)
 
-        # Send welcome message with agent ID and sample questions
+        # 發送歡迎訊息，包含 agent ID 和範例問題
         welcome_msg = f"""# Welcome to Databricks Taxi Data Analysis Agent! 🚕
 
 **Agent ID:** `{agent.id}`
@@ -223,13 +223,13 @@ I'm here to help you analyze the NYC taxi trip dataset. You can ask me questions
 
         await cl.Message(content=welcome_msg).send()
 
-        # Create sample question buttons
+        # 建立範例問題按鈕
         actions = []
         for i, question in enumerate(SAMPLE_QUESTIONS):
             actions.append(
                 cl.Action(
                     name=f"sample_question_{i}",
-                    payload={"question": question.split("(")[0].strip()},  # Add required payload field
+                    payload={"question": question.split("(")[0].strip()},  # 新增必要的 payload 欄位
                     label=f"📊 {question}",
                     description=f"Ask: {question.split('(')[0].strip()}"
                 )
@@ -266,18 +266,18 @@ async def sample_question_4(action):
     await handle_sample_question(action.payload["question"])
 
 async def handle_sample_question(question):
-    """Handle sample question button clicks."""
-    # Send the question as a user message
+    """處理範例問題按鈕點擊。"""
+    # 將問題作為使用者訊息發送
     await cl.Message(
         content=question,
         author="You"
     ).send()
     
-    # Process the question
+    # 處理問題
     await process_question(question)
 
 async def process_question(content):
-    """Process a question through the agent."""
+    """透過 agent 處理問題。"""
     agent = cl.user_session.get("agent")
     thread = cl.user_session.get("thread")
     project_client = cl.user_session.get("project_client")
@@ -287,11 +287,11 @@ async def process_question(content):
         return
 
     try:
-        # Show processing message
+        # 顯示處理中訊息
         processing_msg = cl.Message(content="🤔 Analyzing your question...")
         await processing_msg.send()
 
-        # Create message and run
+        # 建立訊息並執行
         project_client.agents.messages.create(
             thread_id=thread.id,
             role="user",
@@ -303,14 +303,14 @@ async def process_question(content):
             agent_id=agent.id
         )
 
-        # Update processing message
+        # 更新處理中訊息
         processing_msg.content = f"✅ Analysis completed (Status: {run.status})"
         await processing_msg.update()
 
-        # Get the latest messages and display the agent's response
+        # 取得最新訊息並顯示 agent 的回應
         messages = project_client.agents.messages.list(thread_id=thread.id)
         
-        # Find the latest assistant message
+        # 尋找最新的助理訊息
         for message in messages:
             if message.role == "assistant":
                 response_content = ""
@@ -331,12 +331,12 @@ async def process_question(content):
 
 @cl.on_message
 async def main(message: cl.Message):
-    """Handle user messages."""
+    """處理使用者訊息。"""
     await process_question(message.content)
 
 @cl.on_stop
 async def on_stop():
-    """Clean up agent when session ends."""
+    """會話結束時清理 agent。"""
     agent = cl.user_session.get("agent")
     project_client = cl.user_session.get("project_client")
     

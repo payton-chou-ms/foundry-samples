@@ -35,16 +35,16 @@ from azure.ai.agents.models import (FunctionTool, ToolSet)
 from typing import Any, Callable, Set
 from dotenv import load_dotenv
 
-# Load environment variables from .env file
+# 從 .env 檔案載入環境變數
 load_dotenv()
 
 os.environ["DATABRICKS_SDK_UPSTREAM"] = "AzureAIFoundry"
 os.environ["DATABRICKS_SDK_UPSTREAM_VERSION"] = "1.0.0"
 
 DATABRICKS_ENTRA_ID_AUDIENCE_SCOPE = "2ff814a6-3304-4ab8-85cb-cd0e6f879c1d/.default" 
-# Well known Entra ID audience for Azure Databricks - https://learn.microsoft.com/en-us/azure/databricks/dev-tools/auth/user-aad-token
+# Azure Databricks 的已知 Entra ID 對象 - https://learn.microsoft.com/en-us/azure/databricks/dev-tools/auth/user-aad-token
 
-# Get configuration from environment variables
+# 從環境變數取得設定
 FOUNDRY_PROJECT_ENDPOINT = os.getenv("FOUNDRY_PROJECT_ENDPOINT")
 FOUNDRY_DATABRICKS_CONNECTION_NAME = os.getenv("FOUNDRY_DATABRICKS_CONNECTION_NAME")
 GENIE_QUESTION_1 = os.getenv("GENIE_QUESTION_1")
@@ -60,16 +60,16 @@ if not GENIE_QUESTION_2:
     raise ValueError("GENIE_QUESTION_2 environment variable is required")
 
 ##################
-# Utility functions
+# 工具函數
 
 def ask_genie(question: str, conversation_id: str = None) -> str:
     """
-    Ask Genie a question and return the response as JSON.
-    The response JSON will contain the conversation ID and either the message content or a table of results.
-    Reuse the conversation ID in future calls to continue the conversation and maintain context.
+    向 Genie 提問並以 JSON 格式回傳回應。
+    回應 JSON 將包含對話 ID 以及訊息內容或結果表格。
+    在後續呼叫中重複使用對話 ID 以繼續對話並保持上下文。
     
-    param question: The question to ask Genie.
-    param conversation_id: The ID of the conversation to continue. If None, a new conversation will be started.
+    param question: 要向 Genie 提出的問題。
+    param conversation_id: 要繼續的對話 ID。若為 None，將開始新對話。
     """
     try:
         if conversation_id is None:
@@ -86,7 +86,7 @@ def ask_genie(question: str, conversation_id: str = None) -> str:
 
         message_content = genie_api.get_message(genie_space_id, message.conversation_id, message.id)
 
-        # Try to parse structured data if available
+        # 嘗試解析結構化資料（如果有的話）
         if query_result and query_result.statement_response:
             statement_id = query_result.statement_response.statement_id
             results = databricks_workspace_client.statement_execution.get_statement(statement_id)
@@ -115,7 +115,7 @@ def ask_genie(question: str, conversation_id: str = None) -> str:
                 }
             })
 
-        # Fallback to plain message text
+        # 回退到純文字訊息
         if message_content.attachments:
             for attachment in message_content.attachments:
                 if attachment.text and attachment.text.content:
@@ -173,14 +173,14 @@ toolset.add(functions)
 
 
 with project_client:
-    # Create an agent and run user's request with ask_genie function
+    # 使用 ask_genie 函數建立 agent 並執行使用者請求
     project_client.agents.enable_auto_function_calls(toolset)
 
     agent = project_client.agents.create_agent(
         model='gpt-4o',
         name="Databricks Agent",
-        instructions="You're an helpful assistant, use Databricks Genie to answer questions. " \
-        "Use the conversation_id returned by the first call to the ask_genie function to continue the conversation in Genie.",
+        instructions="你是一個有幫助的助理，使用 Databricks Genie 來回答問題。" \
+        "使用第一次呼叫 ask_genie 函數回傳的 conversation_id 來在 Genie 中繼續對話。",
         toolset=toolset,
     )
 
@@ -221,16 +221,16 @@ with project_client:
 
     print(f"Run 2 completed with status: {run_2.status}")
 
-    # Delete the agent when done
+    # 完成時刪除 agent
     project_client.agents.delete_agent(agent.id)
     print("Deleted agent")
 
-    # Fetch and log all messages
+    # 擷取並記錄所有訊息
     messages = project_client.agents.messages.list(thread_id=thread.id)
     for message in messages:
         print(f"Message ID: {message.id}, Role: {message.role}, Content: {message.content}")
 
-    # Fetch and log all run steps
+    # 擷取並記錄所有執行步驟
     print("\n\nSteps in Run 1:")
     steps = project_client.agents.run_steps.list(thread_id=thread.id, run_id=run_1.id)
     for step in steps:
