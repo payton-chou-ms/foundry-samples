@@ -5,6 +5,9 @@ azure-ai-agents>=1.0.0
 azure-identity>=1.12.0
 python-dotenv>=1.0.0
 
+# Semantic Kernel dependencies (for Semantic Kernel implementation)
+semantic-kernel>=1.11.0
+
 # Azure Search dependencies (for AzureAISearchAgent)
 azure-search-documents>=11.4.0
 
