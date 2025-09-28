@@ -10,26 +10,26 @@ from typing import Any, Callable, Set, Dict, List, Optional
 from datetime import datetime, timedelta
 import random
 
-# Mock taxi data functions that simulate querying a Microsoft Fabric lakehouse with taxi trip data
-# In a real implementation, these would connect to your Fabric lakehouse and execute SQL queries
+# Microsoft Fabric lakehouse 中計程車行程數據的模擬查詢函數
+# 在實際實作中，這些函數會連接到您的 Fabric lakehouse 並執行 SQL 查詢
 
 def mock_execute_query(query: str) -> Dict[str, Any]:
     """
-    Mock function to simulate executing a SQL query against taxi trip data.
-    In a real implementation, this would connect to Microsoft Fabric lakehouse.
+    模擬對計程車行程數據執行 SQL 查詢的函數。
+    在實際實作中，這會連接到 Microsoft Fabric lakehouse。
     """
-    print(f"Executing query: {query[:100]}...")
-    # Return mock data for demonstration
-    return {"result": "Mock query result", "query": query}
+    print(f"正在執行查詢: {query[:100]}...")
+    # 返回示範用的模擬數據
+    return {"result": "模擬查詢結果", "query": query}
 
-# Basic Query & Aggregation Functions
+# 基本查詢和聚合函數
 
 def get_daily_trip_stats(date: str) -> str:
     """
-    Get total trip count and revenue for a specific date.
+    取得特定日期的總行程數和營收。
     
-    :param date: Date in YYYY-MM-DD format
-    :return: JSON string with trip statistics
+    :param date: YYYY-MM-DD 格式的日期
+    :return: 包含行程統計的 JSON 字串
     """
     query = f"""
     SELECT 
@@ -40,7 +40,7 @@ def get_daily_trip_stats(date: str) -> str:
     WHERE DATE(pickup_datetime) = '{date}'
     """
     
-    # Mock data generation
+    # 模擬數據產生
     total_trips = random.randint(50000, 80000)
     total_revenue = random.randint(200000, 400000)
     avg_fare = total_revenue / total_trips
@@ -118,7 +118,7 @@ def get_vehicle_and_driver_count() -> str:
     
     return json.dumps(result)
 
-# Historical Trends Functions
+# 歷史趨勢函數
 
 def get_monthly_revenue_trends() -> str:
     """
@@ -220,7 +220,7 @@ def get_top_growth_areas(months: int = 6) -> str:
     
     return json.dumps(result)
 
-# Anomaly & Extreme Value Functions
+# 異常和極值函數
 
 def get_highest_fares(start_date: str, limit: int = 10) -> str:
     """
@@ -325,7 +325,7 @@ def get_anomalous_short_high_fare_trips(days: int = 90) -> str:
     
     return json.dumps(result)
 
-# Geographic Distribution Functions
+# 地理分佈函數
 
 def get_top_pickup_areas(days: int = 30) -> str:
     """
@@ -381,7 +381,7 @@ def get_top_pickup_areas(days: int = 30) -> str:
     
     return json.dumps(result)
 
-# Time Analysis Functions
+# 時間分析函數
 
 def get_day_night_comparison(days: int = 60) -> str:
     """
@@ -502,7 +502,7 @@ def get_hourly_ride_patterns() -> str:
     
     return json.dumps(result)
 
-# Passenger/Driver Behavior Functions
+# 乘客/司機行為函數
 
 def get_passenger_count_distribution() -> str:
     """
@@ -598,7 +598,7 @@ def get_highest_tip_rate_hours() -> str:
     
     return json.dumps(result)
 
-# Field Statistics Functions
+# 欄位統計函數
 
 def get_fare_statistics_by_month(start_month: str, end_month: str) -> str:
     """
@@ -703,7 +703,7 @@ def get_payment_type_analysis() -> str:
     
     return json.dumps(result)
 
-# Helper function to create the function set for the agent
+# 為代理程式建立函數集合的輔助函數
 taxi_query_functions: Set[Callable[..., Any]] = {
     get_daily_trip_stats,
     get_monthly_statistics,

@@ -1,14 +1,23 @@
-# Welcome to Chainlit! 🚀🤖
+# 歡迎使用計程車數據分析助手！ 🚕📊
 
-Hi there, Developer! 👋 We're excited to have you on board. Chainlit is a powerful tool designed to help you prototype, debug and share applications built on top of LLMs.
+您好，歡迎使用 Microsoft Fabric 計程車數據分析系統！👋 我們很高興您能使用這個強大的工具，它專為分析和洞察計程車行程數據而設計。
 
-## Useful Links 🔗
+## 功能特色 ✨
 
-- **Documentation:** Get started with our comprehensive [Chainlit Documentation](https://docs.chainlit.io) 📚
-- **Discord Community:** Join our friendly [Chainlit Discord](https://discord.gg/k73SQ3FyUh) to ask questions, share your projects, and connect with other developers! 💬
+- **智能數據分析**: 使用 Azure AI Foundry 代理程式分析計程車行程模式
+- **互動式介面**: 提供範例問題按鈕，快速開始分析
+- **即時洞察**: 獲得關於行程趨勢、費用分析和地理模式的即時洞察
+- **繁體中文支援**: 完整支援繁體中文介面和回應
 
-We can't wait to see what you create with Chainlit! Happy coding! 💻😊
+## 實用連結 🔗
 
-## Welcome screen
+- **文件資源**: 查看我們的詳細 [Azure AI Foundry 文件](https://docs.microsoft.com/azure/ai-services/) 📚
+- **Microsoft Fabric**: 了解更多關於 [Microsoft Fabric](https://docs.microsoft.com/fabric/) 數據平台 💻
 
-To modify the welcome screen, edit the `chainlit.md` file at the root of your project. If you do not want a welcome screen, just leave this file empty.
+## 開始使用
+
+點擊下方的範例問題按鈕快速開始，或直接在聊天框中輸入您的問題！我們期待看到您發現的數據洞察！ 💻😊
+
+## 歡迎畫面說明
+
+若要修改此歡迎畫面，請編輯專案根目錄中的 `chainlit.md` 檔案。如果您不想要歡迎畫面，只需將此檔案內容清空即可。
