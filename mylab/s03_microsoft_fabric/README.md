@@ -1,98 +1,121 @@
-# Microsoft Fabric Taxi Data Analysis Agent
+# Microsoft Fabric 計程車數據分析代理程式
 
-This sample demonstrates how to use Azure AI Foundry agents to analyze taxi trip data from Microsoft Fabric lakehouse, with both CLI and web UI interfaces.
+此範例展示如何使用 Azure AI Foundry 代理程式分析 Microsoft Fabric lakehouse 中的計程車行程數據，提供 CLI 和 Web UI 兩種介面。
 
-## Features
+## 功能特色
 
-### Updated Agent Configuration
-- Agent personality defined based on questions from `sample.txt`
-- Focused on specific analysis capabilities:
-  - Public holidays vs weekdays analysis
-  - High-fare trip analysis (>$70)
-  - Daytime vs nighttime patterns
-  - Geographic pickup analysis
-  - Passenger count distribution
+### 更新的代理程式配置
+- 基於 `sample.txt` 中問題定義代理程式個性
+- 專注於特定分析能力：
+  - 國定假日與平日分析
+  - 高費用行程分析（>$70）
+  - 日間與夜間模式分析
+  - 地理上車點分析
+  - 乘客數量分佈分析
 
-### Two Interface Options
+### 兩種介面選項
 
-#### 1. Command Line Interface (CLI)
-- Run: `python sample_agents_fabric.py`
-- Interactive menu with sample questions
-- Displays agent ID for tracking
-- Automatic cleanup on exit
+#### 1. 命令列介面（CLI）
+- 執行：`python sample_agents_fabric.py`
+- 包含範例問題的互動選單
+- 顯示代理程式 ID 供追蹤
+- 退出時自動清理資源
 
 #### 2. Chainlit Web UI
-- Run: `chainlit run chainlit_app.py`
-- Interactive web interface
-- Sample question hint buttons
-- Agent lifecycle management (shows agent ID, auto-cleanup on UI close)
-- Real-time chat interface
+- 執行：`chainlit run chainlit_app.py`
+- 互動式網頁介面
+- 範例問題提示按鈕
+- 代理程式生命週期管理（顯示代理程式 ID，UI 關閉時自動清理）
+- 即時聊天介面
 
-## Setup
+## 設定
 
-1. **Install Dependencies**
+1. **安裝依賴項**
    ```bash
    pip install -r requirements.txt
    ```
 
-2. **Environment Configuration**
-   Copy `.env.template` to `.env` and set:
+2. **環境配置**
+   複製 `.env.template` 為 `.env` 並設定：
    ```
    PROJECT_ENDPOINT=your_azure_ai_foundry_project_endpoint
    MODEL_DEPLOYMENT_NAME=your_model_deployment_name
    ```
+   
+   或者您也可以參考 `.env.example` 檔案來了解完整的配置選項。
 
-3. **Prerequisites**
-   - Azure AI Foundry project with deployed model
-   - Microsoft Fabric lakehouse with taxi trip data
-   - Appropriate Azure credentials
+3. **必要條件**
+   - 已部署模型的 Azure AI Foundry 專案
+   - 包含計程車行程數據的 Microsoft Fabric lakehouse
+   - 適當的 Azure 認證
 
-## Usage
+## 快速展示
 
-### CLI Version
+如果您想在不需要 Azure 認證的情況下查看功能：
+
+```bash
+python demo.py
+```
+
+此展示腳本會顯示：
+- 範例問題載入
+- CLI 選單格式預覽
+- 函數配置確認
+- 實作功能概覽
+
+## 使用方法
+
+### CLI 版本
 ```bash
 python sample_agents_fabric.py
 ```
 
-Choose from:
-- 1-5: Sample questions from sample.txt
-- 9: Custom query
-- 0: Exit
+可選擇：
+- 1-5：來自 sample.txt 的範例問題
+- 9：自定義查詢
+- 0：退出
 
-### Chainlit Web UI Version  
+### Chainlit Web UI 版本  
 ```bash
 chainlit run chainlit_app.py
 ```
 
-Features:
-- Click hint buttons to send sample questions
-- Type custom queries in chat
-- View agent ID in welcome message
-- Automatic agent cleanup when closing browser
+功能：
+- 點擊提示按鈕發送範例問題
+- 在聊天中輸入自定義查詢
+- 在歡迎訊息中查看代理程式 ID
+- 關閉瀏覽器時自動清理代理程式
 
-## Sample Questions (from sample.txt)
+## 範例問題（來自 sample.txt）
 
-1. Compare taxi trips on public holidays vs regular weekdays
-2. Analyze trips with fare amounts greater than $70
-3. Compare daytime (7:00-19:00) vs nighttime (19:00-7:00) patterns
-4. Identify top 5 pickup zip codes by trip volume
-5. Determine passenger count distribution and mode
+1. 比較國定假日與一般平日的計程車行程數量
+2. 分析費用金額大於 $70 的行程
+3. 比較日間（7:00-19:00）與夜間（19:00-7:00）模式
+4. 識別按行程量排名前 5 的上車郵遞區號
+5. 確定乘客數量分佈和眾數
 
-## Agent Capabilities
+## 代理程式能力
 
-The agent can analyze various aspects of taxi trip data:
-- Trip counts and revenue statistics
-- Geographic patterns and hotspots
-- Time-based analysis (hourly, daily, seasonal)
-- Fare and payment pattern analysis
-- Anomaly detection
-- Trend analysis and insights
+代理程式可以分析計程車行程數據的各個層面：
+- 行程數量和營收統計
+- 地理模式和熱點
+- 時間分析（每小時、每日、季節性）
+- 費用和付款模式分析
+- 異常檢測
+- 趨勢分析和洞察
 
-## File Structure
+## 檔案結構
 
-- `sample_agents_fabric.py` - CLI version with updated agent configuration
-- `chainlit_app.py` - New Chainlit web UI implementation
-- `taxi_query_functions.py` - Mock data functions (replace with real Fabric queries)
-- `sample.txt` - Sample questions used for agent personality definition
-- `requirements.txt` - Python dependencies
-- `.env.template` - Environment variable template
+```
+mylab/s03_microsoft_fabric/
+├── sample_agents_fabric.py    # CLI 版本，包含更新的代理程式配置
+├── chainlit_app.py           # 新的 Chainlit Web UI 實作
+├── taxi_query_functions.py   # 模擬數據函數（替換為真實的 Fabric 查詢）
+├── sample.txt               # 用於代理程式個性定義的範例問題
+├── demo.py                  # 展示功能的示範腳本
+├── requirements.txt         # Python 依賴項
+├── .env.template           # 環境變數範本
+├── .env.example            # 環境變數設定範例
+├── chainlit.md             # Chainlit 歡迎訊息
+└── README.md               # 本說明文件
+```
