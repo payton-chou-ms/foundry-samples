@@ -188,8 +188,8 @@ class AzureAISearchAgent(BaseAgent):
         """判斷是否需要移交"""
         task_lower = task.lower()
         
-        # 檢查是否需要發送郵件
-        if any(word in task_lower for word in ["send email", "發送郵件", "寄信", "email"]):
+        # 檢查是否需要發送郵件 - 更全面的關鍵詞檢測
+        if any(word in task_lower for word in ["send email", "發送郵件", "寄信", "email", "郵件", "通知客戶", "notify"]):
             return create_handoff_request(
                 from_agent=self.name,
                 to_agent="LogicAppsAgent",
