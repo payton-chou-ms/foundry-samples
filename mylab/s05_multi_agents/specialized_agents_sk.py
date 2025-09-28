@@ -346,7 +346,7 @@ class SemanticKernelSearchAgent(SemanticKernelBaseAgent):
         task_lower = task.lower()
         
         # 檢查是否需要發送郵件
-        if any(word in task_lower for word in ["send email", "發送郵件", "寄信", "email", "郵件", "通知客戶", "notify"]):
+        if any(word in task_lower for word in ["send email", "發送郵件", "寄信", "email", "郵件", "通知客戶", "notify", "發郵件", "郵件通知", "然後發郵件", "然後發送郵件"]):
             return create_handoff_request(
                 from_agent=self.name,
                 to_agent="SemanticKernelLogicAgent",
@@ -398,8 +398,8 @@ class SemanticKernelLogicAgent(SemanticKernelBaseAgent):
         """判斷是否需要移交"""
         task_lower = task.lower()
         
-        # 檢查是否需要搜尋
-        if any(word in task_lower for word in ["search", "find", "搜尋", "查找", "hotel", "酒店"]):
+        # 檢查是否需要搜尋 - 只有在明確的搜尋請求時才移交
+        if any(word in task_lower for word in ["search hotel", "find hotel", "搜尋酒店", "查找酒店", "hotel search"]):
             return create_handoff_request(
                 from_agent=self.name,
                 to_agent="SemanticKernelSearchAgent",
@@ -409,8 +409,8 @@ class SemanticKernelLogicAgent(SemanticKernelBaseAgent):
                 priority=6
             )
         
-        # 檢查是否需要數據分析
-        if any(word in task_lower for word in ["analyze", "analysis", "statistics", "分析", "統計", "taxi", "計程車"]):
+        # 檢查是否需要數據分析 - 只有在明確的分析請求時才移交
+        if any(word in task_lower for word in ["analyze data", "analysis", "statistics", "分析數據", "統計分析", "taxi data", "計程車數據"]):
             return create_handoff_request(
                 from_agent=self.name,
                 to_agent="SemanticKernelFabricAgent", 
@@ -479,8 +479,8 @@ class SemanticKernelFabricAgent(SemanticKernelBaseAgent):
                 priority=7
             )
         
-        # 檢查是否需要更複雜的資料庫查詢
-        if any(word in task_lower for word in ["genie", "databricks", "complex query", "machine learning", "ML"]):
+        # 檢查是否需要更複雜的資料庫查詢  
+        if any(word in task_lower for word in ["genie", "databricks", "complex query", "machine learning", "ML", "機器學習", "複雜", "預測"]):
             return create_handoff_request(
                 from_agent=self.name,
                 to_agent="SemanticKernelDatabricksAgent",
