@@ -36,7 +36,13 @@ from dotenv import load_dotenv
 from azure.identity import DefaultAzureCredential
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.projects import AIProjectClient
-from azure.ai.agents.models import MessageRole, ListSortOrder
+# 修正：新版 SDK 將 AzureAISearchTool / AzureAISearchQueryType 移至 azure.ai.agents.models
+from azure.ai.agents.models import (
+    AzureAISearchTool,
+    AzureAISearchQueryType,
+    MessageRole,
+    ListSortOrder,
+)
 from azure.search.documents import SearchClient
 
 
@@ -120,9 +126,21 @@ def create_ai_agent_with_search(config):
     
     print(f"✅ AI Project 客戶端初始化成功 / AI Project client initialized")
     
+    # 設置 Azure AI Search 工具 / Setup Azure AI Search Tool
+    print("🔍 正在設置 Azure AI Search 工具... / Setting up Azure AI Search tool...")
+    
+    # 創建 AzureAISearchTool 實例
+    ai_search_tool = AzureAISearchTool(
+        index_connection_id="nqkdsearch",  # 使用預設連接ID
+        index_name=config["index_name"],   # 使用我們的 vector-search-quickstart 索引  
+        query_type=AzureAISearchQueryType.SEMANTIC,  # 使用語意查詢
+        top_k=3,  # 返回前3個結果
+        filter=""  # 不使用過濾器
+    )
+    
+    print("✅ Azure AI Search 工具設置完成 (使用 SEMANTIC 查詢類型)")
+    
     # 建立具有搜索功能的 AI agent / Create the AI agent with search capabilities
-    # 注意：在原始 notebook 中，這使用了 FileSearchTool 與向量存儲 / Note: In the original notebook, this was using FileSearchTool with vector stores
-    # 這裡我們建立一個可以擴展搜索工具的基本 agent / Here we're creating a basic agent that can be extended with search tools
     agent = project_client.agents.create_agent(
         model=config["model_deployment_name"],
         name="hotel-search-agent",
@@ -155,14 +173,18 @@ The search index contains the following types of hotel data:
 - Ratings and categories
 - Amenities and tags
 - Parking and renovation dates
+
+請主動使用搜索工具來回答用戶的問題，不要只依賴你的預訓練知識。
+Please actively use the search tool to answer user questions, don't rely only on your pre-trained knowledge.
 """,
-        # 注意：工具整合應該在完整實現中加入此處 / Note: Tools integration would be added here in a full implementation
-        # 目前我們建立一個可以擴展的基本 agent / For now, we create a basic agent that can be extended
+        tools=ai_search_tool.definitions,      # 添加工具定義
+        tool_resources=ai_search_tool.resources # 添加工具資源
     )
     
-    print(f"✅ AI Agent 建立成功 / AI agent created successfully")
+    print(f"✅ AI Agent 建立成功 (含 Azure AI Search 整合) / AI agent created successfully with Azure AI Search integration")
     print(f"📋 Agent ID: {agent.id}")
     print(f"📋 Agent 名稱 / Name: {agent.name}")
+    print(f"🔧 可用工具數量 / Available tools count: {len(ai_search_tool.definitions) if ai_search_tool.definitions else 0}")
     
     return project_client, agent
 
@@ -278,7 +300,8 @@ def compare_with_without_search_tools(project_client, config):
     test_question = "Tell me about luxury hotels with unique amenities."
     
     try:
-        # 建立一個無搜索工具的簡單 agent 以供比較 / Create a simple agent without search tools for comparison
+        # 1. 建立一個無搜索工具的簡單 agent / Create a simple agent without search tools
+        print("🔧 創建無搜索工具的 Agent...")
         simple_agent = project_client.agents.create_agent(
             model=config["model_deployment_name"],
             name="simple-agent-no-search",
@@ -291,15 +314,45 @@ def compare_with_without_search_tools(project_client, config):
         print("-" * 50)
         simple_response = ask_agent_question(project_client, simple_agent, simple_thread, test_question)
         
-        # 清理簡單 agent / Clean up simple agent
+        # 2. 建立一個有搜索工具的 agent / Create an agent with search tools
+        print("\n🔧 創建有搜索工具的 Agent...")
+        
+        # 設置 Azure AI Search 工具
+        ai_search_tool = AzureAISearchTool(
+            index_connection_id="nqkdsearch",
+            index_name=config["index_name"],
+            query_type=AzureAISearchQueryType.SEMANTIC,
+            top_k=3,
+            filter=""
+        )
+        
+        search_agent = project_client.agents.create_agent(
+            model=config["model_deployment_name"],
+            name="search-agent-with-tools",
+            instructions="""You are a hotel search assistant with access to Azure AI Search. 
+            Use the search tool to find specific hotel information and provide detailed, accurate responses based on the search results.""",
+            tools=ai_search_tool.definitions,
+            tool_resources=ai_search_tool.resources
+        )
+        
+        search_thread = project_client.agents.threads.create()
+        
+        print(f"\n✅ 搜索 Agent 回覆 (有搜索工具) / Search agent response (with search tools):")
+        print("-" * 50)
+        search_response = ask_agent_question(project_client, search_agent, search_thread, test_question)
+        
+        # 清理 agents / Clean up agents
         project_client.agents.delete_agent(simple_agent.id)
+        project_client.agents.delete_agent(search_agent.id)
         
         print(f"\n📊 分析 / Analysis:")
         print("1. 簡單 Agent 只能提供一般性的酒店建議")
         print("   Simple agent can only provide general hotel suggestions")
         print("2. 有搜索工具的 Agent 可以提供更具體的資訊")
         print("   Agent with search tools can provide more specific information")
-        print("3. 實際項目中應該整合搜索工具以獲得更好的結果")
+        print("3. 搜索工具 Agent 會主動使用 Azure AI Search 來查找相關資訊")
+        print("   Search tool agent actively uses Azure AI Search to find relevant information")
+        print("4. 實際項目中應該整合搜索工具以獲得更好的結果")
         print("   In real projects, search tools should be integrated for better results")
         
     except Exception as e:
