@@ -367,47 +367,6 @@ def create_handoff_request(
         priority=priority
     )
 
-# 演示函數
-async def demo_semantic_kernel_handoff_system():
-    """演示基於 Semantic Kernel 的移交系統的使用"""
-    print("🚀 Semantic Kernel 多代理程式移交系統演示")
-    print("=" * 60)
-    
-    # 創建協調器
-    orchestrator = SemanticKernelOrchestrator()
-    await orchestrator.initialize()
-    
-    # 創建演示代理
-    demo_agent1 = SemanticKernelBaseAgent(
-        name="SKDemoAgent1",
-        description="Semantic Kernel 演示代理1",
-        instructions="你是一個基於 Semantic Kernel 的演示代理程式，負責初步處理用戶請求。如果請求涉及特定領域的專業知識，你應該移交給相應的專門代理程式。請用繁體中文回應。"
-    )
-    
-    demo_agent2 = SemanticKernelBaseAgent(
-        name="SKDemoAgent2", 
-        description="Semantic Kernel 演示代理2",
-        instructions="你是一個基於 Semantic Kernel 的專門代理程式，負責處理從其他代理程式移交過來的專業任務。請用繁體中文回應，並提供詳細的解決方案。"
-    )
-    
-    # 註冊代理
-    orchestrator.register_agent(demo_agent1)
-    orchestrator.register_agent(demo_agent2)
-    
-    try:
-        # 初始化所有代理
-        await orchestrator.initialize_all_agents()
-        
-        # 執行演示任務
-        task = "請幫我分析一個簡單的問題並提供解決方案。我需要了解如何使用 Semantic Kernel 來處理多代理協作。"
-        result = await orchestrator.execute_task(task, "SKDemoAgent1")
-        
-        print(f"任務執行結果：{json.dumps(result, indent=2, ensure_ascii=False)}")
-        print(f"移交歷史：{json.dumps(orchestrator.get_handoff_history(), indent=2, ensure_ascii=False)}")
-        
-    finally:
-        # 清理資源
-        await orchestrator.cleanup_all_agents()
-
 if __name__ == "__main__":
-    asyncio.run(demo_semantic_kernel_handoff_system())
+    print("This module provides the Semantic Kernel handoff infrastructure for the multi-agent system.")
+    print("Please use multi_agent_system_sk.py to run the complete Semantic Kernel-based system.")

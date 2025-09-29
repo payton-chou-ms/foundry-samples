@@ -343,61 +343,12 @@ async def interactive_mode():
     finally:
         await system.cleanup()
 
-async def demo_mode():
-    """演示模式 - 展示代理間協作"""
-    print("🎭 演示模式 - 多代理程式協作")
-    print("=" * 50)
-    
-    system = MultiAgentSystem()
-    
-    try:
-        await system.initialize()
-        
-        # Demo scenarios
-        demo_scenarios = [
-            {
-                "name": "跨領域協作示例",
-                "task": "幫我搜尋一家在紐約的酒店，然後發郵件把酒店資訊寄給客戶，同時分析一下這個地區的計程車使用情況",
-                "agent": "search"
-            },
-            {
-                "name": "數據升級示例", 
-                "task": "我需要進行複雜的機器學習分析來預測計程車需求模式",
-                "agent": "fabric"
-            }
-        ]
-        
-        for scenario in demo_scenarios:
-            print(f"\n🎯 {scenario['name']}")
-            print(f"📝 任務: {scenario['task']}")
-            print("-" * 40)
-            
-            result = await system.execute_task(
-                task=scenario["task"],
-                initial_agent=scenario["agent"]
-            )
-            
-            print(f"結果: {'成功' if result.get('success') else '失敗'}")
-            print(f"移交次數: {result.get('handoff_count', 0)}")
-            
-            await asyncio.sleep(2)  # Brief pause between demos
-            
-    except Exception as e:
-        print(f"❌ 演示錯誤: {str(e)}")
-    finally:
-        await system.cleanup()
-
 async def main():
     """主函數"""
     print("🤖 歡迎使用多代理程式協作系統！")
     print("=" * 50)
     
-    mode = input("選擇模式 - [1] 互動模式 / [2] 演示模式 [預設: 1]: ").strip()
-    
-    if mode == "2":
-        await demo_mode()
-    else:
-        await interactive_mode()
+    await interactive_mode()
 
 if __name__ == "__main__":
     asyncio.run(main())

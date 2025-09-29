@@ -355,52 +355,6 @@ def create_handoff_request(
         priority=priority
     )
 
-# 演示函數
-async def demo_handoff_system():
-    """演示移交系統的使用"""
-    print("🚀 多代理程式移交系統演示")
-    print("=" * 50)
-    
-    # 初始化項目客戶端
-    project_client = AIProjectClient(
-        endpoint=os.environ["PROJECT_ENDPOINT"],
-        credential=DefaultAzureCredential(exclude_interactive_browser_credential=False)
-    )
-    
-    # 創建協調器
-    orchestrator = HandoffOrchestrator(project_client)
-    
-    # 創建演示代理
-    demo_agent1 = BaseAgent(
-        name="DemoAgent1",
-        description="演示代理1",
-        instructions="你是一個演示代理程式，負責初步處理用戶請求。如果請求涉及特定領域的專業知識，你應該移交給相應的專門代理程式。"
-    )
-    
-    demo_agent2 = BaseAgent(
-        name="DemoAgent2", 
-        description="演示代理2",
-        instructions="你是一個專門的代理程式，負責處理從其他代理程式移交過來的專業任務。"
-    )
-    
-    # 註冊代理
-    orchestrator.register_agent(demo_agent1)
-    orchestrator.register_agent(demo_agent2)
-    
-    try:
-        # 初始化所有代理
-        await orchestrator.initialize_all_agents()
-        
-        # 執行演示任務
-        task = "請幫我分析一個簡單的問題並提供解決方案。"
-        result = await orchestrator.execute_task(task, "DemoAgent1")
-        
-        print(f"任務執行結果：{json.dumps(result, indent=2, ensure_ascii=False)}")
-        print(f"移交歷史：{json.dumps(orchestrator.get_handoff_history(), indent=2, ensure_ascii=False)}")
-        
-    finally:
-        # 清理資源
-        await orchestrator.cleanup_all_agents()
-
 if __name__ == "__main__":
-    asyncio.run(demo_handoff_system())
+    print("This module provides the handoff infrastructure for the multi-agent system.")
+    print("Please use multi_agent_system.py to run the complete system.")
