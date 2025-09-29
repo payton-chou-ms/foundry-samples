@@ -5,19 +5,19 @@
 
 """
 說明:
-    多代理程式協作系統主程式，整合四個專門的代理程式：
-    - Azure AI Search Agent (搜尋代理)
-    - Logic Apps Agent (自動化代理)
-    - Microsoft Fabric Agent (數據分析代理)  
-    - Databricks Agent (資料科學代理)
+    基於 Semantic Kernel 的多代理程式協作系統主程式，整合四個專門的代理程式：
+    - SemanticKernelSearchAgent (搜尋代理)
+    - SemanticKernelLogicAgent (自動化代理)
+    - SemanticKernelFabricAgent (數據分析代理)  
+    - SemanticKernelDatabricksAgent (資料科學代理)
     
     支援代理程式間的智慧移交和協作。
 
 使用方式:
-    python multi_agent_system.py
+    python multi_agent_system_sk.py
 
 前置條件:
-    pip install azure-ai-projects azure-identity python-dotenv azure-search-documents
+    pip install semantic-kernel azure-identity python-dotenv azure-search-documents
     pip install databricks-sdk azure-mgmt-logic requests
     
     設定 .env 檔案包含所需的環境變數
@@ -31,19 +31,22 @@ from typing import Dict, Any, List, Optional
 from datetime import datetime
 from dotenv import load_dotenv
 
-# Import our handoff system and specialized agents
-from step4_handoff import HandoffOrchestrator
-from specialized_agents import (
-    AzureAISearchAgent, 
-    LogicAppsAgent, 
-    FabricAgent, 
-    DatabricksAgent,
-    create_agent,
-    AVAILABLE_AGENTS
-)
-
-from azure.ai.projects import AIProjectClient
-from azure.identity import DefaultAzureCredential
+# Import our semantic kernel handoff system and specialized agents
+try:
+    from step4_handoff_semantic_kernel import SemanticKernelOrchestrator
+    from specialized_agents_sk import (
+        SemanticKernelSearchAgent,
+        SemanticKernelLogicAgent, 
+        SemanticKernelFabricAgent,
+        SemanticKernelDatabricksAgent,
+        create_semantic_kernel_agent,
+        AVAILABLE_SK_AGENTS
+    )
+    SEMANTIC_KERNEL_AVAILABLE = True
+except ImportError:
+    print("Warning: Semantic Kernel modules not available. Running in mock mode.")
+    SEMANTIC_KERNEL_AVAILABLE = False
+    class SemanticKernelOrchestrator: pass
 
 # Load environment variables
 load_dotenv()
@@ -52,90 +55,85 @@ load_dotenv()
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
-class MultiAgentSystem:
-    """多代理程式系統主類"""
+class SemanticKernelMultiAgentSystem:
+    """基於 Semantic Kernel 的多代理程式系統主類"""
     
     def __init__(self):
-        self.project_client = None
         self.orchestrator = None
         self.agents = {}
         self.initialized = False
         
     async def initialize(self):
         """初始化多代理程式系統"""
-        print("🚀 初始化多代理程式協作系統...")
-        print("=" * 60)
+        print("🚀 初始化 Semantic Kernel 多代理程式協作系統...")
+        print("=" * 70)
         
         # Check required environment variables
-        required_vars = ["PROJECT_ENDPOINT", "MODEL_DEPLOYMENT_NAME"]
+        required_vars = ["AZURE_OPENAI_ENDPOINT", "MODEL_DEPLOYMENT_NAME"]
         missing_vars = [var for var in required_vars if not os.getenv(var)]
         
         if missing_vars:
-            raise ValueError(f"Missing required environment variables: {', '.join(missing_vars)}")
-        
-        # Initialize AI Project Client
-        self.project_client = AIProjectClient(
-            endpoint=os.environ["PROJECT_ENDPOINT"],
-            credential=DefaultAzureCredential(exclude_interactive_browser_credential=False)
-        )
+            print(f"⚠️ Missing required environment variables: {', '.join(missing_vars)}")
+            print("⚠️ System will run in mock mode")
         
         # Create orchestrator
-        self.orchestrator = HandoffOrchestrator(self.project_client)
+        self.orchestrator = SemanticKernelOrchestrator()
+        await self.orchestrator.initialize()
         
         # Create and register specialized agents
-        print("\n📋 創建專門代理程式...")
+        print("\n📋 創建基於 Semantic Kernel 的專門代理程式...")
         
         try:
-            # Azure AI Search Agent
-            search_agent = AzureAISearchAgent()
+            # Semantic Kernel Search Agent
+            search_agent = SemanticKernelSearchAgent()
             self.orchestrator.register_agent(search_agent)
             self.agents["search"] = search_agent
-            print("✅ AzureAISearchAgent - 搜尋代理")
+            print("✅ SemanticKernelSearchAgent - 搜尋代理")
             
-            # Logic Apps Agent  
-            logic_agent = LogicAppsAgent()
+            # Semantic Kernel Logic Agent  
+            logic_agent = SemanticKernelLogicAgent()
             self.orchestrator.register_agent(logic_agent)
             self.agents["logicapps"] = logic_agent
-            print("✅ LogicAppsAgent - 自動化代理")
+            print("✅ SemanticKernelLogicAgent - 自動化代理")
             
-            # Microsoft Fabric Agent
-            fabric_agent = FabricAgent()
+            # Semantic Kernel Fabric Agent
+            fabric_agent = SemanticKernelFabricAgent()
             self.orchestrator.register_agent(fabric_agent)
             self.agents["fabric"] = fabric_agent
-            print("✅ FabricAgent - 數據分析代理")
+            print("✅ SemanticKernelFabricAgent - 數據分析代理")
             
-            # Databricks Agent
-            databricks_agent = DatabricksAgent()
+            # Semantic Kernel Databricks Agent
+            databricks_agent = SemanticKernelDatabricksAgent()
             self.orchestrator.register_agent(databricks_agent)
             self.agents["databricks"] = databricks_agent
-            print("✅ DatabricksAgent - 資料科學代理")
+            print("✅ SemanticKernelDatabricksAgent - 資料科學代理")
             
         except Exception as e:
             logger.error(f"Error creating agents: {str(e)}")
             raise
         
         # Initialize all agents
-        print("\n🔧 初始化所有代理程式...")
+        print("\n🔧 初始化所有 Semantic Kernel 代理程式...")
         await self.orchestrator.initialize_all_agents()
         
         self.initialized = True
-        print("\n✅ 多代理程式系統初始化完成！")
+        print("\n✅ Semantic Kernel 多代理程式系統初始化完成！")
         
     async def execute_task(self, task: str, initial_agent: str = "search", context: Dict[str, Any] = None) -> Dict[str, Any]:
         """執行任務並支援代理程式間協作"""
         if not self.initialized:
             raise RuntimeError("System not initialized. Call initialize() first.")
         
-        print(f"\n🎯 執行任務: {task}")
+        print(f"\n🎯 執行任務 (Semantic Kernel): {task}")
         print(f"📍 起始代理: {initial_agent}")
         print("-" * 50)
         
         # Validate initial agent
         agent_name_map = {
-            "search": "AzureAISearchAgent",
-            "logicapps": "LogicAppsAgent", 
-            "fabric": "FabricAgent",
-            "databricks": "DatabricksAgent"
+            "search": "SemanticKernelSearchAgent",
+            "logicapps": "SemanticKernelLogicAgent", 
+            "fabric": "SemanticKernelFabricAgent",
+            "databricks": "SemanticKernelDatabricksAgent"
         }
         
         if initial_agent not in agent_name_map:
@@ -179,23 +177,23 @@ class MultiAgentSystem:
     def get_agent_capabilities(self) -> Dict[str, str]:
         """獲取各代理程式的能力說明"""
         return {
-            "AzureAISearchAgent": "🔍 專門處理搜尋相關查詢，包括酒店搜尋、資訊檢索、向量搜尋等",
-            "LogicAppsAgent": "⚡ 專門處理自動化任務，包括郵件發送、工作流程、API 整合等",
-            "FabricAgent": "📊 專門處理數據分析，包括計程車數據統計、趨勢分析、地理分析等",
-            "DatabricksAgent": "🧠 專門處理複雜查詢，包括機器學習、大數據處理、高級分析等"
+            "SemanticKernelSearchAgent": "🔍 專門處理搜尋相關查詢，包括酒店搜尋、資訊檢索、向量搜尋等 (Semantic Kernel)",
+            "SemanticKernelLogicAgent": "⚡ 專門處理自動化任務，包括郵件發送、工作流程、API 整合等 (Semantic Kernel)",
+            "SemanticKernelFabricAgent": "📊 專門處理數據分析，包括計程車數據統計、趨勢分析、地理分析等 (Semantic Kernel)",
+            "SemanticKernelDatabricksAgent": "🧠 專門處理複雜查詢，包括機器學習、大數據處理、高級分析等 (Semantic Kernel)"
         }
     
     def show_system_status(self):
         """顯示系統狀態"""
-        print("\n" + "=" * 60)
-        print("🏢 多代理程式協作系統狀態")
-        print("=" * 60)
+        print("\n" + "=" * 70)
+        print("🏢 Semantic Kernel 多代理程式協作系統狀態")
+        print("=" * 70)
         
         if not self.initialized:
             print("❌ 系統未初始化")
             return
         
-        print("✅ 系統已初始化")
+        print("✅ Semantic Kernel 系統已初始化")
         print(f"\n📋 已註冊代理程式數量: {len(self.agents)}")
         
         capabilities = self.get_agent_capabilities()
@@ -203,20 +201,20 @@ class MultiAgentSystem:
             print(f"\n{description}")
         
         print(f"\n📈 移交歷史記錄數: {len(self.orchestrator.get_handoff_history())}")
-        print("=" * 60)
+        print("=" * 70)
     
     async def cleanup(self):
         """清理系統資源"""
         if self.orchestrator:
-            print("\n🧹 清理系統資源...")
+            print("\n🧹 清理 Semantic Kernel 系統資源...")
             await self.orchestrator.cleanup_all_agents()
             print("✅ 清理完成")
 
 def display_menu():
     """顯示互動選單"""
-    print("\n" + "=" * 70)
-    print("🤖 多代理程式協作系統 - 選單")
-    print("=" * 70)
+    print("\n" + "=" * 80)
+    print("🤖 Semantic Kernel 多代理程式協作系統 - 選單")
+    print("=" * 80)
     print("\n請選擇操作：")
     print("\n示例任務：")
     print("   1. 搜尋紐約的精品酒店")
@@ -229,7 +227,7 @@ def display_menu():
     print("   7. 查看移交歷史記錄")
     print("   8. 自定義任務")
     print("   0. 退出")
-    print("\n" + "=" * 70)
+    print("\n" + "=" * 80)
 
 def get_sample_tasks() -> Dict[str, Dict[str, Any]]:
     """獲取示例任務"""
@@ -237,33 +235,33 @@ def get_sample_tasks() -> Dict[str, Dict[str, Any]]:
         "1": {
             "task": "我想找紐約的精品酒店，評分要高，最好有商務設施",
             "agent": "search",
-            "description": "酒店搜尋任務"
+            "description": "酒店搜尋任務 (SK)"
         },
         "2": {
             "task": "比較日間（7:00–19:00）與夜間（19:00–7:00）的計程車行程數量和平均車資金額",
             "agent": "fabric", 
-            "description": "數據分析任務"
+            "description": "數據分析任務 (SK)"
         },
         "3": {
             "task": "發送一封電子郵件，包含當前時間和系統狀態信息",
             "agent": "logicapps",
-            "description": "自動化任務"
+            "description": "自動化任務 (SK)"
         },
         "4": {
             "task": "找出車資金額大於 70 的行程數量和這些高車資行程的百分比",
             "agent": "fabric",
-            "description": "統計分析任務"  
+            "description": "統計分析任務 (SK)"  
         },
         "5": {
             "task": "使用 Genie 查詢我們資料集中最常見的乘客數量值",
             "agent": "databricks",
-            "description": "複雜資料查詢"
+            "description": "複雜資料查詢 (SK)"
         }
     }
 
 async def interactive_mode():
     """互動模式"""
-    system = MultiAgentSystem()
+    system = SemanticKernelMultiAgentSystem()
     
     try:
         await system.initialize()
@@ -345,8 +343,8 @@ async def interactive_mode():
 
 async def main():
     """主函數"""
-    print("🤖 歡迎使用多代理程式協作系統！")
-    print("=" * 50)
+    print("🤖 歡迎使用 Semantic Kernel 多代理程式協作系統！")
+    print("=" * 60)
     
     await interactive_mode()
 
