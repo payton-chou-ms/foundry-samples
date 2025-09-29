@@ -182,5 +182,5 @@ with project_client:
         print("---")
 
     # 完成後刪除 agent
-    project_client.agents.delete_agent(agent.id)
-    print("已刪除 agent")
+    # project_client.agents.delete_agent(agent.id)
+    # print("已刪除 agent")
