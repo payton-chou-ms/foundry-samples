@@ -185,6 +185,7 @@ with project_client:
     )
 
     print(f"Agent '{agent.name}' created with model '{agent.model}'")
+    print(f"Agent ID: {agent.id}")
 
     thread = project_client.agents.threads.create()
     print(f"Created thread, ID: {thread.id}")
@@ -222,8 +223,8 @@ with project_client:
     print(f"Run 2 completed with status: {run_2.status}")
 
     # 完成時刪除 agent
-    project_client.agents.delete_agent(agent.id)
-    print("Deleted agent")
+    # project_client.agents.delete_agent(agent.id)
+    # print("Deleted agent")
 
     # 擷取並記錄所有訊息
     messages = project_client.agents.messages.list(thread_id=thread.id)
