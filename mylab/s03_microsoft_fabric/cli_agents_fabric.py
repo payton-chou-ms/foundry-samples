@@ -272,16 +272,16 @@ def main():
             print(f"❌ 初始化失敗: {str(e)}")
             return
         
-        finally:
-            # <cleanup>
-            # 清理資源
-            try:
-                if 'agent' in locals():
-                    project_client.agents.delete_agent(agent.id)
-                    print(f"\n🧹 已清理代理資源")
-            except Exception as e:
-                print(f"⚠️  清理資源時發生錯誤: {str(e)}")
-            # </cleanup>
+        # finally:
+        #     # <cleanup>
+        #     # 清理資源
+        #     try:
+        #         if 'agent' in locals():
+        #             project_client.agents.delete_agent(agent.id)
+        #             print(f"\n🧹 已清理代理資源")
+        #     except Exception as e:
+        #         print(f"⚠️  清理資源時發生錯誤: {str(e)}")
+        #     # </cleanup>
 
 if __name__ == "__main__":
     main()

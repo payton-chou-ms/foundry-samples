@@ -178,7 +178,7 @@ with project_client:
 
     agent = project_client.agents.create_agent(
         model='gpt-4o',
-        name="Databricks Agent",
+        name="Databricks_Agent",
         instructions="你是一個有幫助的助理，使用 Databricks Genie 來回答問題。" \
         "使用第一次呼叫 ask_genie 函數回傳的 conversation_id 來在 Genie 中繼續對話。",
         toolset=toolset,
