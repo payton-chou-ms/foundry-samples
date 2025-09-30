@@ -7,15 +7,16 @@
 """
 說明:
     此範例展示如何使用具有 Chainlit UI 的代理程式來分析 Microsoft Fabric 
-    lakehouse 中的計程車行程數據。功能包括範例問題提示、代理程式生命週期管理
-    和互動式聊天介面。
+    lakehouse 中的計程車行程數據。使用真實的 Fabric 連接進行數據查詢。
+    功能包括範例問題提示、代理程式生命週期管理和互動式聊天介面。
 
 必要條件:
     1) 設定包含計程車行程數據的 Microsoft Fabric lakehouse
     2) 配置具有適當模型部署的 Azure AI Foundry 專案
+    3) 在 Azure AI Foundry 中建立 Fabric 連接
     
 使用方法:
-    chainlit run chainlit_app.py
+    chainlit run ui_agents_fabric.py
  
     執行範例前:
  
@@ -25,6 +26,8 @@
     1) PROJECT_ENDPOINT - 專案端點，可在您的 Azure AI Foundry 專案概觀頁面中找到
     2) MODEL_DEPLOYMENT_NAME - AI 模型的部署名稱，可在您的 Azure AI Foundry 專案
        「模型 + 端點」分頁的「名稱」欄位下找到
+    3) FABRIC_CONNECTION_NAME - Fabric 連接名稱，可在 Azure AI Foundry 專案的
+       「Connected resources」中找到
 """
 
 import os
@@ -35,11 +38,8 @@ from dotenv import load_dotenv
 import chainlit as cl
 
 from azure.ai.projects import AIProjectClient
-from azure.ai.agents.models import ToolSet, FunctionTool
+from azure.ai.agents.models import FabricTool, ListSortOrder
 from azure.identity import DefaultAzureCredential
-
-# 匯入計程車查詢函數
-from taxi_query_functions import taxi_query_functions
 
 # 載入環境變數
 load_dotenv()
@@ -65,7 +65,7 @@ async def on_chat_start():
     global project_client, current_agent, current_thread
     
     # 檢查必要的環境變數
-    required_vars = ["PROJECT_ENDPOINT", "MODEL_DEPLOYMENT_NAME"]
+    required_vars = ["PROJECT_ENDPOINT", "MODEL_DEPLOYMENT_NAME", "FABRIC_CONNECTION_NAME"]
     missing_vars = [var for var in required_vars if not os.environ.get(var)]
     
     if missing_vars:
@@ -82,13 +82,14 @@ async def on_chat_start():
             endpoint=os.environ["PROJECT_ENDPOINT"],
         )
         
-        # 使用計程車查詢函數建立功能工具
-        functions = FunctionTool(functions=taxi_query_functions)
-        toolset = ToolSet()
-        toolset.add(functions)
+        # 取得 Fabric 連接 ID
+        await cl.Message(content="🔗 正在取得 Fabric 連接...").send()
+        conn_id = project_client.connections.get(os.environ["FABRIC_CONNECTION_NAME"]).id
+        await cl.Message(content=f"✅ 成功取得 Fabric 連接 ID: `{conn_id}`").send()
         
-        # 啟用自動函數呼叫
-        project_client.agents.enable_auto_function_calls(toolset)
+        # 初始化 Fabric 工具
+        fabric = FabricTool(connection_id=conn_id)
+        await cl.Message(content="✅ Fabric 工具初始化完成").send()
 
         # 基於範例問題建立具有個性的代理程式
         agent_instructions = """您是專業的計程車數據分析助手，專門分析 Microsoft Fabric lakehouse 中的計程車行程數據。
@@ -102,7 +103,7 @@ async def on_chat_start():
 
 您應該：
 1. 提供清晰、結構化的回應，包含具體數字和統計資料
-2. 使用適當的函數從 lakehouse 檢索真實數據
+2. 使用 Fabric lakehouse 中的數據進行分析
 3. 基於數據分析提供洞察和趨勢
 4. 以繁體中文呈現資訊，同時保留技術術語和欄位名稱的英文
 5. 始終保持專業和樂於助人的語調
@@ -113,7 +114,7 @@ async def on_chat_start():
             model=os.environ["MODEL_DEPLOYMENT_NAME"],
             name="TaxiDataAnalysisAgent",
             instructions=agent_instructions,
-            toolset=toolset,
+            tools=fabric.definitions,
         )
         
         # 建立對話線程
@@ -265,15 +266,23 @@ async def process_query(query_content: str):
         
         if run and run.status == "completed":
             # 取得最新的助手訊息
-            messages = project_client.agents.messages.list(thread_id=thread_id)
-            message_list = list(messages)
+            messages = project_client.agents.messages.list(
+                thread_id=thread_id, 
+                order=ListSortOrder.ASCENDING
+            )
             
-            for message in message_list:
-                if message.role == "assistant":
-                    # 使用結果更新處理訊息
-                    processing_msg.content = f"**助手回覆:**\n\n{message.content}"
-                    await processing_msg.update()
-                    break
+            # 顯示所有助手的回應
+            assistant_responses = []
+            for msg in messages:
+                if msg.role == "assistant":
+                    if msg.text_messages:
+                        for text_msg in msg.text_messages:
+                            assistant_responses.append(text_msg.text.value)
+            
+            if assistant_responses:
+                # 使用最後一個回應更新處理訊息
+                processing_msg.content = f"**助手回覆:**\n\n{assistant_responses[-1]}"
+                await processing_msg.update()
         else:
             processing_msg.content = "❌ 查詢處理失敗，請重試"
             await processing_msg.update()

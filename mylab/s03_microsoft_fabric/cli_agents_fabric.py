@@ -7,15 +7,16 @@
 """
 說明:
     此範例展示如何使用具有持續對話功能的代理程式來分析 Microsoft Fabric lakehouse 
-    中的計程車行程數據。代理程式可以處理各種類型的查詢，包括基本統計、趨勢分析、
-    異常檢測和地理分析。
+    中的計程車行程數據。代理程式使用真實的 Fabric 連接進行數據查詢，支援各種類型
+    的分析，包括基本統計、趨勢分析、異常檢測和地理分析。
 
 必要條件:
     1) 設定包含計程車行程數據的 Microsoft Fabric lakehouse
     2) 配置具有適當模型部署的 Azure AI Foundry 專案
+    3) 在 Azure AI Foundry 中建立 Fabric 連接
     
 使用方法:
-    python sample_agents_fabric.py
+    python cli_agents_fabric.py
  
     執行範例前:
  
@@ -25,23 +26,21 @@
     1) PROJECT_ENDPOINT - 專案端點，可在您的 Azure AI Foundry 專案概觀頁面中找到
     2) MODEL_DEPLOYMENT_NAME - AI 模型的部署名稱，可在您的 Azure AI Foundry 專案
        「模型 + 端點」分頁的「名稱」欄位下找到
+    3) FABRIC_CONNECTION_NAME - Fabric 連接名稱，可在 Azure AI Foundry 專案的
+       「Connected resources」中找到
 """
 
 # <imports>
 import os
 import time
-from typing import Set
 from dotenv import load_dotenv
 
 from azure.ai.projects import AIProjectClient
-from azure.ai.agents.models import ToolSet, FunctionTool
+from azure.ai.agents.models import FabricTool, ListSortOrder
 from azure.identity import DefaultAzureCredential
 
 # 載入環境變數
 load_dotenv()
-
-# 匯入計程車查詢函數
-from taxi_query_functions import taxi_query_functions
 # </imports>
 
 # <sample_questions>
@@ -115,31 +114,6 @@ def process_message_with_retry(project_client, thread_id: str, agent_id: str, ma
     
     return None
 
-def display_messages(project_client, thread_id: str):
-    """以格式化的方式顯示對話訊息。"""
-    try:
-        messages = project_client.agents.messages.list(thread_id=thread_id)
-        
-        # 轉換為清單並反轉以按時間順序顯示
-        message_list = list(messages)
-        message_list.reverse()
-        
-        print("\n" + "🔄 對話歷史:")
-        print("-" * 60)
-        
-        for message in message_list:
-            role = message.role
-            content = message.content
-            
-            if role == "user":
-                print(f"👤 您: {content}")
-            elif role == "assistant":
-                print(f"🤖 助手: {content}")
-            print("-" * 60)
-            
-    except Exception as e:
-        print(f"❌ Error displaying messages: {str(e)}")
-
 # <client_initialization>
 # 建立專案用戶端
 project_client = AIProjectClient(
@@ -152,7 +126,7 @@ def main():
     """執行持續對話代理程式的主要函數。"""
     
     # 檢查必要的環境變數
-    required_vars = ["PROJECT_ENDPOINT", "MODEL_DEPLOYMENT_NAME"]
+    required_vars = ["PROJECT_ENDPOINT", "MODEL_DEPLOYMENT_NAME", "FABRIC_CONNECTION_NAME"]
     missing_vars = [var for var in required_vars if not os.environ.get(var)]
     
     if missing_vars:
@@ -163,13 +137,14 @@ def main():
     with project_client:
         try:
             # <agent_creation>
-            # 使用計程車查詢函數建立功能工具
-            functions = FunctionTool(functions=taxi_query_functions)
-            toolset = ToolSet()
-            toolset.add(functions)
+            # 取得 Fabric 連接 ID
+            print("🔗 正在取得 Fabric 連接...")
+            conn_id = project_client.connections.get(os.environ["FABRIC_CONNECTION_NAME"]).id
+            print(f"✅ 成功取得 Fabric 連接 ID: {conn_id}")
             
-            # 啟用自動函數呼叫
-            project_client.agents.enable_auto_function_calls(toolset)
+            # 初始化 Fabric 工具
+            fabric = FabricTool(connection_id=conn_id)
+            print("✅ Fabric 工具初始化完成")
 
             agent = project_client.agents.create_agent(
                 model=os.environ["MODEL_DEPLOYMENT_NAME"],
@@ -185,13 +160,13 @@ def main():
 
 您應該：
 1. 提供清晰、結構化的回應，包含具體數字和統計資料
-2. 使用適當的函數從 lakehouse 檢索真實數據
-3. 基於數據分析提供洞察和趋势
+2. 使用 Fabric lakehouse 中的數據進行分析
+3. 基於數據分析提供洞察和趨勢
 4. 以繁體中文呈現資訊，同時保留技術術語和欄位名稱的英文
 5. 始終保持專業和樂於助人的語調
 
 當使用者詢問計程車行程數據時，提供包含相關統計、趨勢和可行洞察的全面分析。""",
-                toolset=toolset,
+                tools=fabric.definitions,
             )
             print(f"✅ 成功建立代理，ID: {agent.id}")
             
@@ -250,8 +225,23 @@ def main():
                     if run and run.status == "completed":
                         print(f"✅ 查詢處理完成")
                         
-                        # 顯示對話
-                        display_messages(project_client, thread.id)
+                        # 顯示最新的助手回應
+                        messages = project_client.agents.messages.list(
+                            thread_id=thread.id, 
+                            order=ListSortOrder.ASCENDING
+                        )
+                        
+                        print("\n" + "🔄 對話歷史:")
+                        print("-" * 60)
+                        
+                        for msg in messages:
+                            if msg.role == "user":
+                                print(f"👤 您: {msg.content}")
+                            elif msg.role == "assistant":
+                                if msg.text_messages:
+                                    for text_msg in msg.text_messages:
+                                        print(f"🤖 助手: {text_msg.text.value}")
+                            print("-" * 60)
                     else:
                         print("❌ 查詢處理失敗，請重試")
                     
@@ -271,17 +261,16 @@ def main():
         except Exception as e:
             print(f"❌ 初始化失敗: {str(e)}")
             return
-        
-        # finally:
-        #     # <cleanup>
-        #     # 清理資源
-        #     try:
-        #         if 'agent' in locals():
-        #             project_client.agents.delete_agent(agent.id)
-        #             print(f"\n🧹 已清理代理資源")
-        #     except Exception as e:
-        #         print(f"⚠️  清理資源時發生錯誤: {str(e)}")
-        #     # </cleanup>
+        finally:
+            # <cleanup>
+            # 清理資源
+            try:
+                if 'agent' in locals():
+                    project_client.agents.delete_agent(agent.id)
+                    print(f"\n🧹 已清理代理資源")
+            except Exception as e:
+                print(f"⚠️  清理資源時發生錯誤: {str(e)}")
+            # </cleanup>
 
 if __name__ == "__main__":
     main()
