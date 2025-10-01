@@ -1,6 +1,7 @@
 # Copyright (c) Microsoft. All rights reserved.
 
 from semantic_kernel.agents import Agent, AzureAIAgent
+from azure.ai.agents.models import AzureAISearchTool, AzureAISearchQueryType
 from config.settings import settings
 from plugins import AISearchPlugin, DatabricksPlugin, FabricPlugin, LogicAppPlugin
 
@@ -20,14 +21,27 @@ class AgentFactory:
         try:
             search_agent_definition = await client.agents.get_agent(agent_id=search_agent_id)
             
+            # 檢查 agent 是否有 Azure AI Search 工具
+            has_search_tool = False
+            if search_agent_definition.tools:
+                for tool in search_agent_definition.tools:
+                    if hasattr(tool, 'type') and tool.type in ['azure_ai_search', 'retrieval']:
+                        has_search_tool = True
+                        break
+            
+            if not has_search_tool:
+                print(f"⚠️ 現有 Agent ({search_agent_id}) 沒有 Azure AI Search 工具")
+                print(f"⚠️ 將創建新的 Agent 以確保正確配置...")
+                return await self._create_new_ai_search_agent(client)
+            
             # 檢查並修復 description 如果為空
             if not search_agent_definition.description:
                 print(f"⚠️ AI Search Agent 缺少 description，正在更新...")
                 search_agent_definition = await client.agents.update_agent(
                     agent_id=search_agent_id,
-                    name=search_agent_definition.name or "AISearchAgent",
-                    description="專精於文檔搜尋和資訊檢索的助手，具備 Azure AI Search 整合功能",
-                    instructions=search_agent_definition.instructions or "您是資訊檢索專家。使用搜尋工具來獲取準確的結果。",
+                    name=search_agent_definition.name or "hotel-search-agent",
+                    description="專精於飯店搜尋和文檔檢索的助手，具備 Azure AI Search 整合功能",
+                    instructions=search_agent_definition.instructions or "你是一個專業的飯店推薦助手。請使用搜索工具來查找相關的飯店資訊。",
                     model=search_agent_definition.model,
                     tools=search_agent_definition.tools,
                 )
@@ -35,56 +49,53 @@ class AgentFactory:
             search_agent = AzureAIAgent(
                 client=client,
                 definition=search_agent_definition,
-                plugins=[AISearchPlugin()],
             )
             print(f"✅ 已載入 AI Search Agent (ID: {search_agent_id})")
+            print(f"   工具數量: {len(search_agent_definition.tools) if search_agent_definition.tools else 0}")
             return search_agent
             
         except Exception as e:
-            print(f"⚠️ 無法載入 AI Search Agent: {e}")
+            print(f"⚠️ 無法載入現有 AI Search Agent: {e}")
+            print(f"⚠️ 將創建新的 Agent...")
             # 如果無法載入，建立新的 agent
             return await self._create_new_ai_search_agent(client)
     
     async def _create_new_ai_search_agent(self, client) -> Agent:
         """創建新的 AI Search 代理程式"""
+        # 創建 Azure AI Search 工具配置
+        ai_search_tool = AzureAISearchTool(
+            index_connection_id=settings.AZURE_SEARCH_CONNECTION_ID,
+            index_name=settings.AZURE_SEARCH_INDEX,
+            query_type=AzureAISearchQueryType.SEMANTIC,
+            top_k=5,  # 返回前5個最相關的結果
+            filter="",  # 可以添加過濾條件
+        )
+        
         search_agent_definition = await client.agents.create_agent(
             model=settings.MODEL_DEPLOYMENT_NAME,
-            name="AISearchAgent", 
+            name="hotel-search-agent", 
             description="專精於飯店搜尋和文檔檢索的助手，具備 Azure AI Search 整合功能",
-            instructions="""您是一個專業的飯店推薦和文檔檢索助手。您可以根據用戶的需求，使用 Azure AI Search 來搜索和推薦合適的飯店或相關文檔。
+            instructions="""你是一個專業的飯店推薦助手。你可以根據用戶的需求，使用 Azure AI Search 來搜索和推薦合適的飯店。
 
-您的專長包括:
-1. 飯店推薦: 根據用戶需求（豪華、經濟、商務等）搜尋合適的飯店
-2. 文檔檢索: 搜尋技術文檔、最佳實務、政策文件等企業資料
-3. 資訊分析: 提供詳細的搜尋結果分析和建議
+請使用搜索工具來查找相關的飯店資訊，然後提供詳細的推薦與說明。
 
-當用戶詢問飯店推薦或文檔搜尋相關問題時，請:
-- 使用搜尋工具來查找相關資訊
-- 提供詳細的推薦與說明
-- 包含具體的資訊如位置、價格、特色等
-- 以繁體中文回應，保持專業和有幫助的語調""",
-            tools=[
-                {
-                    "type": "function",
-                    "function": {
-                        "name": "AISearchPlugin-search_documents",
-                        "description": "搜尋和檢索相關文檔資訊",
-                        "parameters": {
-                            "type": "object",
-                            "properties": {
-                                "query": {"type": "string", "description": "搜尋查詢內容"}
-                            },
-                            "required": ["query"],
-                        },
-                    },
-                },
-            ],
+當用戶詢問飯店推薦時，請:
+1. **必須使用 Azure AI Search 工具**來查詢實際的飯店資料
+2. 基於搜尋結果提供具體的飯店推薦
+3. 包含飯店的詳細資訊（名稱、位置、價格、特色、評分等）
+4. 提供清晰的比較和建議
+5. 以繁體中文回應，保持專業和有幫助的語調
+
+重要：不要假設或編造資料，始終基於搜尋工具返回的實際結果來回應。""",
+            tools=ai_search_tool.definitions,
+            tool_resources=ai_search_tool.resources,
         )
         search_agent = AzureAIAgent(
             client=client,
             definition=search_agent_definition,
-            plugins=[AISearchPlugin()],
+            # 注意：不需要 plugins，因為使用的是 Azure AI Search 原生工具
         )
+        print(f"✅ AI Search Agent 創建成功，使用索引: {settings.AZURE_SEARCH_INDEX}")
         return search_agent
     
     async def create_databricks_agent(self, client) -> Agent:

@@ -72,7 +72,7 @@ class MagenticOrchestrator:
         """處理使用者查詢"""
         try:
             # 根據查詢類型調整超時時間
-            adaptive_timeout = min(self.response_timeout, TimeoutManager.get_recommended_timeout(query_type))
+            adaptive_timeout = TimeoutManager.get_recommended_timeout(query_type)
             
             # 重置計數器
             self.current_responses = 0
@@ -93,11 +93,11 @@ class MagenticOrchestrator:
                 adaptive_timeout
             )
 
-            # 等待並展示結果，也設定超時
+            # 等待並展示結果，使用相同的超時時間
             print("\n🔍 正在等待最終結果...")
             final_result = await asyncio.wait_for(
                 orchestration_result.get(),
-                timeout=min(30, adaptive_timeout // 2)  # 最終結果的超時時間較短
+                timeout=adaptive_timeout  # ✅ 使用相同的超時時間，確保有足夠時間獲取結果
             )
 
             elapsed_time = time.time() - self.start_time
@@ -129,11 +129,17 @@ class MagenticOrchestrator:
             if query_type == "complex":
                 print("• 將複雜查詢拆分為多個簡單查詢")
             print("=" * 60)
+            
+            # 清理超時的任務
+            await self._cleanup_runtime()
             return False
             
         except KeyboardInterrupt:
             print(f"\n⚠️ **用戶中斷操作**")
             print("=" * 60)
+            
+            # 清理中斷的任務
+            await self._cleanup_runtime()
             return False
             
         except Exception as e:
@@ -142,4 +148,25 @@ class MagenticOrchestrator:
             print("=" * 60)
             print(f"錯誤詳情: {str(e)}")
             print("=" * 60)
+            
+            # 清理異常的任務
+            await self._cleanup_runtime()
             return False
+    
+    async def _cleanup_runtime(self):
+        """清理運行時的殘留任務"""
+        try:
+            print("🧹 正在清理運行時任務...")
+            if self.runtime:
+                # 停止當前的 runtime
+                await self.runtime.stop_when_idle()
+                
+                # 等待一小段時間確保清理完成
+                await asyncio.sleep(1)
+                
+                # 重新啟動 runtime 以供下次使用
+                self.runtime = InProcessRuntime()
+                self.runtime.start()
+                print("✅ 運行時已重置")
+        except Exception as e:
+            print(f"⚠️ 清理運行時時發生錯誤: {e}")

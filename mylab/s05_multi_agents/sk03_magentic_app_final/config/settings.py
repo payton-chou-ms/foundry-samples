@@ -16,6 +16,10 @@ class Settings:
     # Foundry 專案設定
     FOUNDRY_PROJECT_ENDPOINT = os.getenv("FOUNDRY_PROJECT_ENDPOINT")
     
+    # Azure AI Search 設定
+    AZURE_SEARCH_CONNECTION_ID = os.getenv("AZURE_AI_CONNECTION_ID", "nqkdsearch")
+    AZURE_SEARCH_INDEX = os.getenv("AZURE_SEARCH_INDEX", "vector-search-quickstart")
+    
     # Databricks 設定
     FOUNDRY_DATABRICKS_CONNECTION_NAME = os.getenv("FOUNDRY_DATABRICKS_CONNECTION_NAME")
     DATABRICKS_ENTRA_ID_AUDIENCE_SCOPE = "2ff814a6-3304-4ab8-85cb-cd0e6f879c1d/.default"

@@ -92,11 +92,11 @@ class TimeoutManager:
             推薦的超時時間（秒）
         """
         timeouts = {
-            "simple": 30,      # 簡單查詢（如時間、單一代理程式）
-            "search": 45,      # 搜尋類查詢
-            "analysis": 60,    # 數據分析類查詢
-            "multi_agent": 90, # 多代理程式協作查詢
-            "complex": 120,    # 複雜的整合查詢
+            "simple": 120,      # 簡單查詢（如時間、單一代理程式）- 2分鐘
+            "search": 180,      # 搜尋類查詢 - 3分鐘
+            "analysis": 240,    # 數據分析類查詢 - 4分鐘
+            "multi_agent": 300, # 多代理程式協作查詢 - 5分鐘
+            "complex": 360,     # 複雜的整合查詢 - 6分鐘
         }
         
         return timeouts.get(query_type, 60)  # 預設60秒
