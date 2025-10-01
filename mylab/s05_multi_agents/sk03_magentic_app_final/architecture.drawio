@@ -1,0 +1,133 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/28.1.2 Chrome/138.0.7204.243 Electron/37.4.0 Safari/537.36" version="28.1.2">
+  <diagram name="Multi-Agent System Architecture" id="architecture">
+    <mxGraphModel dx="1246" dy="686" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" background="#6B6B6B" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" value="Multi-Agent System Architecture&#xa;多代理程式企業智能助手架構" style="text;html=1;strokeColor=#2D7600;fillColor=#60a917;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=20;fontStyle=1;fontColor=#ffffff;" parent="1" vertex="1">
+          <mxGeometry x="527" y="20" width="600" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="main" value="main.py&#xa;主入口點" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e51400;strokeColor=#B20000;fontSize=14;fontStyle=1;fontColor=#ffffff;" parent="1" vertex="1">
+          <mxGeometry x="677" y="100" width="300" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="config-layer" value="Configuration Layer / 配置層" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#d80073;strokeColor=#A50040;fontSize=12;fontColor=#ffffff;" parent="1" vertex="1">
+          <mxGeometry x="292" y="222" width="179" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="config-settings" value="config/settings.py&#xa;環境變數管理&#xa;配置驗證&#xa;Databricks SDK 設定" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" parent="config-layer" vertex="1">
+          <mxGeometry y="30" width="179" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="plugins-layer" value="Plugin Layer / 插件層" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#1ba1e2;strokeColor=#006EAF;fontSize=12;fontColor=#ffffff;" parent="1" vertex="1">
+          <mxGeometry x="489" y="222" width="193" height="230" as="geometry" />
+        </mxCell>
+        <mxCell id="plugin-search" value="ai_search_plugin.py&#xa;🔍 AI Search 功能" style="text;strokeColor=#001DBC;fillColor=#0050ef;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;strokeColor=#9673a6;fontColor=#ffffff;" parent="plugins-layer" vertex="1">
+          <mxGeometry y="30" width="193" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="plugin-databricks" value="databricks_plugin.py&#xa;📊 Databricks Genie 數據分析" style="text;strokeColor=#001DBC;fillColor=#0050ef;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;strokeColor=#9673a6;fontColor=#ffffff;" parent="plugins-layer" vertex="1">
+          <mxGeometry y="80" width="193" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="plugin-fabric" value="fabric_plugin.py&#xa;📈 Microsoft Fabric 商業智慧" style="text;strokeColor=#001DBC;fillColor=#0050ef;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;strokeColor=#9673a6;fontColor=#ffffff;" parent="plugins-layer" vertex="1">
+          <mxGeometry y="130" width="193" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="plugin-logicapp" value="logic_app_plugin.py&#xa;⚡ Logic App 工作流程自動化" style="text;strokeColor=#001DBC;fillColor=#0050ef;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;strokeColor=#9673a6;fontColor=#ffffff;" parent="plugins-layer" vertex="1">
+          <mxGeometry y="180" width="193" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="agents-layer" value="Agent Layer / 代理程式層" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#6a00ff;strokeColor=#3700CC;fontSize=12;fontColor=#ffffff;" parent="1" vertex="1">
+          <mxGeometry x="723" y="222" width="209" height="230" as="geometry" />
+        </mxCell>
+        <mxCell id="agent-factory" value="agent_factory.py&#xa;🏭 Agent 工廠模式&#xa;--------------------" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontStyle=1" parent="agents-layer" vertex="1">
+          <mxGeometry y="30" width="209" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="agent-search" value="🔍 AI Search Agent" style="text;strokeColor=#432D57;fillColor=#76608a;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontColor=#ffffff;" parent="agents-layer" vertex="1">
+          <mxGeometry y="80" width="209" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="agent-databricks" value="📊 Databricks Analyst Agent" style="text;strokeColor=#432D57;fillColor=#76608a;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontColor=#ffffff;" parent="agents-layer" vertex="1">
+          <mxGeometry y="110" width="209" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="agent-fabric" value="📈 Fabric Business Analyst Agent" style="text;strokeColor=#432D57;fillColor=#76608a;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontColor=#ffffff;" parent="agents-layer" vertex="1">
+          <mxGeometry y="140" width="209" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="agent-logicapp" value="⚡ Logic App Orchestrator Agent" style="text;strokeColor=#432D57;fillColor=#76608a;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontColor=#ffffff;" parent="agents-layer" vertex="1">
+          <mxGeometry y="170" width="209" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="agent-lifecycle" value="Agent 生命週期管理" style="text;strokeColor=#432D57;fillColor=#76608a;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontStyle=2;fontColor=#ffffff;" parent="agents-layer" vertex="1">
+          <mxGeometry y="200" width="209" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="orchestration-layer" value="Orchestration Layer / 編排層" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#d80073;strokeColor=#A50040;fontSize=12;fontColor=#ffffff;" parent="1" vertex="1">
+          <mxGeometry x="952" y="222" width="197" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="orchestration-magentic" value="magentic_orchestrator.py&#xa;🎯 Magentic 編排器&#xa;StandardMagenticManager&#xa;InProcessRuntime&#xa;Response Callbacks&#xa;Query Processing" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" parent="orchestration-layer" vertex="1">
+          <mxGeometry y="30" width="197" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="utils-layer" value="Utility Layer / 工具層" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#a20025;strokeColor=#6F0000;fontSize=12;fontColor=#ffffff;" parent="1" vertex="1">
+          <mxGeometry x="1179" y="222" width="168" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="utils-connection" value="connection_manager.py&#xa;🔗 連接管理&#xa;Databricks / Fabric 連接" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" parent="utils-layer" vertex="1">
+          <mxGeometry y="30" width="168" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="utils-logicapp" value="logic_app_manager.py&#xa;📧 Logic App 管理" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" parent="utils-layer" vertex="1">
+          <mxGeometry y="80" width="168" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="utils-menu" value="menu_helper.py&#xa;🎨 UI 和選單輔助" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" parent="utils-layer" vertex="1">
+          <mxGeometry y="120" width="168" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="utils-timeout" value="timeout_manager.py&#xa;⏱️ 超時管理" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" parent="utils-layer" vertex="1">
+          <mxGeometry y="160" width="168" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="services-layer" value="External Services / 外部服務" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#f0a30a;strokeColor=#BD7000;fontSize=12;fontColor=#000000;" parent="1" vertex="1">
+          <mxGeometry x="360" y="520" width="920" height="190" as="geometry" />
+        </mxCell>
+        <mxCell id="service-row1" value="" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" parent="services-layer" vertex="1">
+          <mxGeometry y="30" width="920" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="service-row2" value="" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" parent="services-layer" vertex="1">
+          <mxGeometry y="110" width="920" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="service-aisearch" value="Azure AI Search&#xa;向量搜索&#xa;語意檢索" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#b0e3e6;strokeColor=#0e8088;fontColor=#000000;" parent="1" vertex="1">
+          <mxGeometry x="380" y="560" width="200" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="service-databricks" value="Azure Databricks&#xa;Genie API&#xa;數據分析" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#b0e3e6;strokeColor=#0e8088;fontColor=#000000;" parent="1" vertex="1">
+          <mxGeometry x="610" y="560" width="200" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="service-fabric" value="Microsoft Fabric&#xa;Lakehouse&#xa;商業智慧" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#b0e3e6;strokeColor=#0e8088;fontColor=#000000;" parent="1" vertex="1">
+          <mxGeometry x="840" y="560" width="200" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="service-logicapp" value="Azure Logic Apps&#xa;工作流程&#xa;電子郵件" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#b0e3e6;strokeColor=#0e8088;fontColor=#000000;" parent="1" vertex="1">
+          <mxGeometry x="1070" y="560" width="200" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="azure-foundation" value="Azure AI Foundry Agent Service" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#6a00ff;strokeColor=#3700CC;fontColor=#ffffff;fontSize=14;fontStyle=1" parent="1" vertex="1">
+          <mxGeometry x="380" y="640" width="890" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeWidth=2;fillColor=#fff2cc;strokeColor=#d6b656;" parent="1" source="main" target="config-layer" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.25;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeWidth=2;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="1" source="main" target="plugins-layer" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeWidth=3;fillColor=#f8cecc;strokeColor=#b85450;" parent="1" source="main" target="agents-layer" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.75;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeWidth=2;fillColor=#e1d5e7;strokeColor=#9673a6;" parent="1" source="main" target="orchestration-layer" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeWidth=2;fillColor=#d5e8d4;strokeColor=#82b366;" parent="1" source="main" target="utils-layer" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeWidth=2;dashed=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="1" source="plugins-layer" target="service-aisearch" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeWidth=2;dashed=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="1" source="plugins-layer" target="service-databricks" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeWidth=2;dashed=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="1" source="plugins-layer" target="service-fabric" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeWidth=2;dashed=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="1" source="plugins-layer" target="service-logicapp" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="version" value="Version 2.0.0 | Multi-Agent Enterprise System | Microsoft © 2025" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;fontStyle=2" parent="1" vertex="1">
+          <mxGeometry x="527" y="1040" width="600" height="30" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
