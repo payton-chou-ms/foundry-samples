@@ -150,7 +150,7 @@ foundry-samples/
 
 ## 🔗 相關連結
 
-- [Azure AI Foundry 官方文件](https://docs.microsoft.com/azure/ai-services/)
+- [Azure AI Foundry 官方文件](https://learn.microsoft.com/azure/ai-studio/)
 - [Microsoft 程式碼範例瀏覽器](https://docs.microsoft.com/samples)
 - [貢獻者授權協議 (CLA)](https://cla.opensource.microsoft.com)
 
